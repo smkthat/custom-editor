@@ -180,6 +180,8 @@ export function useRelationReference({
     });
     */
 
+
+
     return {
         errors,
         templates,
@@ -198,6 +200,7 @@ export function useRelationReference({
         displayItems,
         loading,
         duplicationFieldsSchema,
+        select,
         create,
         createItem,
         update,
@@ -214,6 +217,31 @@ export function useRelationReference({
         // testvalue: value,
     };
 
+    function select(items: (string | number)[] | null, collection?: string) {
+        const info = relationInfo.value;
+        if (!info) return;
+
+        const selected = items!.map((item) => {
+            switch (info.type) {
+                case 'm2a': {
+                    if (!collection) throw new Error('You need to provide a collection on an m2a');
+                    const displayItem: DisplayItem = {
+                        $type: 'selected',
+                        [info.reverseJunctionField.field]: itemPrimaryKey.value,
+                        [info.collectionField.field]: collection,
+                        [info.junctionField.field]: {
+                            [info.relationPrimaryKeyFields[collection]!.field]: item,
+                        }};
+                    return displayItem;
+                
+                }
+            }
+        });
+        console.log('selected', selected);
+        newItem = true;
+        editItem(selected[0]!, 'relationBlock');
+    }
+    
     // [DIRECTUS_CORE][!MODIFIED!] from m2a-field
     function createItem(
         collection: string,
@@ -229,7 +257,6 @@ export function useRelationReference({
             [relationInfo.value.junctionField.field]: {},
         };
 
-        newItem = true;
         // [!MODIFIED!] assign `type` and add `type` to function parameters
         editModalActive.value[type] = true;
     }
@@ -239,6 +266,7 @@ export function useRelationReference({
         item: DisplayItem,
         type: RelationNodeType = "relationBlock"
     ) {
+        console.log("editItem",item)
         if (!relationInfo.value) return;
 
         const relationPkField =
@@ -262,13 +290,15 @@ export function useRelationReference({
         editModalActive.value[type] = true;
         // [!MODIFIED!] `editingCollection` not needed
         // editingCollection.value = item[relationInfo.value.collectionField.field];
-
+        if (item.$type === "selected") newItem = true;
         if (item?.$type === "created" && !isItemSelected(item)) {
+            console.log("if here",editModalActive.value, item )
             currentlyEditing.value = null;
             relatedPrimaryKey.value = null;
             // [!MODIFIED!] `editingCollection` not needed
             // editingCollection.value = null;
         } else {
+            console.log("else here", editModalActive.value, item )
             if (!relationPkField) return;
             currentlyEditing.value = get(item, [junctionPkField], null);
             relatedPrimaryKey.value = get(
@@ -284,8 +314,9 @@ export function useRelationReference({
         item: Record<string, any>,
         insertNode: (attrs: RelationNodeAttrs) => void
     ) {
+        console.log("stageEdits,", item, insertNode);
         if (isEmpty(item)) return;
-
+        
         if (newItem) {
             const nodeId = uuidv4();
 

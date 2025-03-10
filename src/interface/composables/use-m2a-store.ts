@@ -34,6 +34,7 @@ export const useM2aStore = () => ({
     state,
 
     initialized(fetchedItems: Item[]) {
+        console.log("initialized", initialized.value, fetchedItems);
         if (!isEqual(fetchedItems, initializedFetchedItems.value)) {
             initialized.value = false;
             initializedFetchedItems.value = fetchedItems;
