@@ -31,7 +31,7 @@ export type RelationQueryMultiple = {
 export type DisplayItem = {
     [key: string]: any;
     $index?: number;
-    $type?: "created" | "updated" | "deleted";
+    $type?: "created" | "updated" | "deleted" | "selected";
     $edits?: number;
 };
 
@@ -608,6 +608,7 @@ export function useRelationMultiple(
         }
 
         function isItemSelected(item: DisplayItem) {
+            console.log("isItemSelected", item, relation.value);
             return (
                 relation.value !== undefined &&
                 item[relation.value.reverseJunctionField.field] !== undefined

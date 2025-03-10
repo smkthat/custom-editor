@@ -57,6 +57,7 @@
         </v-list>
     </v-menu>
 
+
     <drawer-item
         v-model:active="editModalActive.relationBlock"
         :disabled="drawerDisabled"
@@ -80,27 +81,84 @@
         :circular-field="relationInfo!.reverseJunctionField.field"
         @input="(item: Record<string, any>) => stageEdits(item, relationInlineBlockAction)"
     />
+
+    <v-menu
+        class="first"
+        show-arrow
+        placement="bottom-start"
+        :fullHeight="true"
+    >
+        <template #activator="{ toggle }">
+            <ToolButton
+                :title="title + ' (Existing)'"
+                :icon
+                :action="toggle"
+                :disabled="disabled && !!relationInlineBlockTool.disabled?.(editor)"
+                :active="active || !!relationInlineBlockTool.active?.(editor)"
+            />
+        </template>
+        <v-list>
+            <v-list-item
+                v-for="availableCollection of blockCollections"
+                :key="availableCollection.collection"
+                clickable
+                @click="() => selectItem(availableCollection.collection)"
+                :active="isActive(availableCollection.collection)"
+                :aria-pressed="isActive(availableCollection.collection)"
+                :disabled
+            >
+                <v-list-item-icon>
+                    <v-icon :name="availableCollection.icon" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                    <v-text-overflow :text="availableCollection.name" />
+                </v-list-item-content>
+            </v-list-item>
+        </v-list>
+    </v-menu>
+
+    <drawer-collection
+			v-if="!disabled && selectingFrom"
+			multiple
+			:active="!!selectingFrom"
+			:collection="selectingFrom"
+			@input="itemSelected($event!, selectingFrom ?? undefined)"
+			@update:active="selectingFrom = null"
+		/>
+        
+
 </template>
 
 
 
 <script setup lang="ts">
-    import { computed, inject } from 'vue';
+    import { computed, inject, ref, watch } from 'vue';
     import ToolButton from "../../components/ToolButton.vue";
     import relationInlineBlockTool from "../relation-inline-block"
     import type { CustomToolButtonProps, RelationReference, RelationNodeAttrs } from '../../types';
 
     type RelationBlockType = 'relation-block' | 'relation-inline-block';
+    const selectingFrom = ref<string | null>(null);
 
     const props = defineProps<CustomToolButtonProps>();
-
-    const { editModalActive, disabled: drawerDisabled, relationInfo, allowedCollections, allowedBlockCollections, allowedInlineBlockCollections, currentlyEditing, relatedPrimaryKey, editsAtStart, stageEdits, createItem }: RelationReference = inject('m2aRelation')!;
+    
+    const { editModalActive, disabled: drawerDisabled, relationInfo, allowedCollections, allowedBlockCollections, allowedInlineBlockCollections, currentlyEditing, relatedPrimaryKey, editsAtStart, stageEdits, createItem, select }: RelationReference = inject('m2aRelation')!;
+    console.log("Drawer disabled", drawerDisabled.value );
 
     const blockCollections = computed(() => {
         if (allowedBlockCollections.value.length) return allowedBlockCollections.value;
         if (!allowedInlineBlockCollections.value.length) return allowedCollections.value;
         return [];
     })
+    function selectItem(collection: string) {
+        selectingFrom.value = collection;
+        console.log( collection );
+        
+    }
+    function itemSelected(item: any, collection: any) {
+        console.log( item, collection );
+        select( item, collection );
+    }
 
     const relationInlineBlockAction = (attrs: RelationNodeAttrs) => relationInlineBlockTool.action!(props.editor, attrs);
 
