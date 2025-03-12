@@ -608,7 +608,6 @@ export function useRelationMultiple(
         }
 
         function isItemSelected(item: DisplayItem) {
-            console.log("isItemSelected", item, relation.value);
             return (
                 relation.value !== undefined &&
                 item[relation.value.reverseJunctionField.field] !== undefined

@@ -119,10 +119,9 @@
 
     <drawer-collection
 			v-if="!disabled && selectingFrom"
-			multiple
 			:active="!!selectingFrom"
 			:collection="selectingFrom"
-			@input="itemSelected($event!, selectingFrom ?? undefined)"
+			@input="(item: any) => itemSelected(item, selectingFrom ?? undefined, action)"
 			@update:active="selectingFrom = null"
 		/>
         
@@ -132,7 +131,7 @@
 
 
 <script setup lang="ts">
-    import { computed, inject, ref, watch } from 'vue';
+    import { computed, inject, ref } from 'vue';
     import ToolButton from "../../components/ToolButton.vue";
     import relationInlineBlockTool from "../relation-inline-block"
     import type { CustomToolButtonProps, RelationReference, RelationNodeAttrs } from '../../types';
@@ -143,7 +142,6 @@
     const props = defineProps<CustomToolButtonProps>();
     
     const { editModalActive, disabled: drawerDisabled, relationInfo, allowedCollections, allowedBlockCollections, allowedInlineBlockCollections, currentlyEditing, relatedPrimaryKey, editsAtStart, stageEdits, createItem, select }: RelationReference = inject('m2aRelation')!;
-    console.log("Drawer disabled", drawerDisabled.value );
 
     const blockCollections = computed(() => {
         if (allowedBlockCollections.value.length) return allowedBlockCollections.value;
@@ -152,12 +150,10 @@
     })
     function selectItem(collection: string) {
         selectingFrom.value = collection;
-        console.log( collection );
         
     }
-    function itemSelected(item: any, collection: any) {
-        console.log( item, collection );
-        select( item, collection );
+    function itemSelected(item: any, collection: any, action:any) {
+        select( item, collection, action );
     }
 
     const relationInlineBlockAction = (attrs: RelationNodeAttrs) => relationInlineBlockTool.action!(props.editor, attrs);
