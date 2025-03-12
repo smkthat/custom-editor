@@ -180,8 +180,6 @@ export function useRelationReference({
     });
     */
 
-
-
     return {
         errors,
         templates,
@@ -353,7 +351,7 @@ export function useRelationReference({
         insertNode: (attrs: RelationNodeAttrs) => void
     ) {
         if (isEmpty(item)) return;
-        
+
         if (newItem) {
             const nodeId = uuidv4();
 

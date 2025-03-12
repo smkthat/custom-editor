@@ -57,7 +57,6 @@
         </v-list>
     </v-menu>
 
-
     <drawer-item
         v-model:active="editModalActive.relationBlock"
         :disabled="drawerDisabled"
