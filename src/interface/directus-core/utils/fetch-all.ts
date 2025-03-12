@@ -12,11 +12,18 @@ export const fetchAll = async <T = unknown>(
     url: Parameters<any["get"]>[0],
     config: Parameters<any["get"]>[1] = {},
     // [END] different from original
-    limit = Infinity
+    limit = Infinity,
+    api: any = null,
+    stores: any = null
 ): Promise<T[]> => {
     // [START] different from original
-    const api = useApi();
-    const { useServerStore } = useStores();
+    if(!api) {
+        api = useApi();
+    } 
+    if(!stores) {
+        stores = useStores();
+    } 
+    const { useServerStore } = stores;
     // [END] different from original
 
     let page = 1;

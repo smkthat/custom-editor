@@ -45,6 +45,7 @@ export type RelationReference = {
     displayItems: ComputedRef<DisplayItem[]>;
     loading: Ref<boolean>;
     duplicationFieldsSchema: Record<string, any>;
+    select: (item: any, collection: string, insertNode: any) => any;
     create: (...items: Record<string, any>[]) => void;
     update: (...items: DisplayItem[]) => void;
     remove: (...items: DisplayItem[]) => void;

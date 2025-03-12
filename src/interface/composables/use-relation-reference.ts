@@ -198,6 +198,7 @@ export function useRelationReference({
         displayItems,
         loading,
         duplicationFieldsSchema,
+        select,
         create,
         createItem,
         update,
@@ -214,6 +215,72 @@ export function useRelationReference({
         // testvalue: value,
     };
 
+    function select(items: (string | number)[] | null, collection: string, insertNode: any) {
+        const info = relationInfo.value;
+        if (!info) return;
+
+        const selected = items!.map((item) => {
+            switch (info.type) {
+                case 'm2a': {
+                    if (!collection) throw new Error('You need to provide a collection on an m2a');
+                    const displayItem: DisplayItem = {
+                        $type: 'selected',
+                        [info.reverseJunctionField.field]: itemPrimaryKey.value,
+                        [info.collectionField.field]: collection,
+                        [info.junctionField.field]: {
+                            [info.relationPrimaryKeyFields[collection]!.field]: item,
+                        }};
+                    return displayItem;
+                
+                }
+            }
+        });
+        newItem = true;
+        const item = selected[0]!;
+        const type = "relationBlock";
+        if (!relationInfo.value) return;
+        const relationPkField =
+            relationInfo.value.relationPrimaryKeyFields[
+                item[relationInfo.value.collectionField.field]
+            ]?.field;
+
+        const junctionField = relationInfo.value.junctionField.field;
+        const junctionPkField =
+            relationInfo.value.junctionPrimaryKeyField.field;
+
+        editsAtStart.value = {
+            ...getItemEdits(item),
+            [relationInfo.value.collectionField.field]:
+                item[relationInfo.value.collectionField.field],
+        };
+        if (!relationPkField) return;
+        currentlyEditing.value = get(item, [junctionPkField], null);
+        relatedPrimaryKey.value = get(
+            item,
+            [junctionField, relationPkField],
+            null
+        );
+        const nodeId = uuidv4();
+
+        insertNode({
+             id: nodeId,
+             junction: junctionCollection,
+             collection: item.collection,
+         });
+
+        // Create M2A relation
+        item[junctionPrimaryKeyField] = nodeId;
+        create(item);
+
+        // Add to M2A Store
+        const cleanedItem = cloneDeep(cleanItem(item));
+        m2aStore.create(
+            cleanedItem,
+            junctionPrimaryKeyField,
+            editorField.value
+        );
+    }
+    
     // [DIRECTUS_CORE][!MODIFIED!] from m2a-field
     function createItem(
         collection: string,
@@ -229,7 +296,6 @@ export function useRelationReference({
             [relationInfo.value.junctionField.field]: {},
         };
 
-        newItem = true;
         // [!MODIFIED!] assign `type` and add `type` to function parameters
         editModalActive.value[type] = true;
     }
