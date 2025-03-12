@@ -2,7 +2,7 @@
 
 // [START] different from original
 // import api from '@/api';
-import { useApi } from "@directus/extensions-sdk";
+import { useApi, useStores } from "@directus/extensions-sdk";
 // import { RelationM2A } from '@/composables/use-relation-m2a';
 import type { RelationM2A } from "./use-relation-m2a";
 // import { RelationM2M } from "@/composables/use-relation-m2m";
@@ -49,6 +49,7 @@ export function useRelationMultiple(
 ) {
     // [START] different from original
     const api = useApi();
+    const stores = useStores();
     // [END] different from original
 
     const loading = ref(false);
@@ -730,7 +731,6 @@ export function useRelationMultiple(
                     );
 
                     fields.add(pkField);
-
                     return fetchAll<Record<string, any>[]>(
                         getEndpoint(collection),
                         {
@@ -747,7 +747,10 @@ export function useRelationMultiple(
                                     },
                                 },
                             },
-                        }
+                        },
+                        Infinity,
+                        api,
+                        stores
                     );
                 })
             );
