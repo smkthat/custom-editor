@@ -8,7 +8,7 @@ export default defineTool({
     // Custom
     key: "relation-block",
     name: customMessages.tools.relation_block,
-    icon: "add",
+    icon: "library_add",
     excludeFromOptions: true,
     // Already imported
     extension: [],

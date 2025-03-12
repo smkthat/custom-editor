@@ -91,7 +91,7 @@
         <template #activator="{ toggle }">
             <ToolButton
                 :title="title + ' (Existing)'"
-                :icon
+                :icon="'library_books'"
                 :action="toggle"
                 :disabled="disabled && !!relationInlineBlockTool.disabled?.(editor)"
                 :active="active || !!relationInlineBlockTool.active?.(editor)"
