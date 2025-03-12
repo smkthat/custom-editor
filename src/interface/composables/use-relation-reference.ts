@@ -217,7 +217,7 @@ export function useRelationReference({
         // testvalue: value,
     };
 
-    function select(items: (string | number)[] | null, collection?: string) {
+    function select(items: (string | number)[] | null, collection: string, insertNode: any) {
         const info = relationInfo.value;
         if (!info) return;
 
@@ -237,9 +237,50 @@ export function useRelationReference({
                 }
             }
         });
-        console.log('selected', selected);
         newItem = true;
-        editItem(selected[0]!, 'relationBlock');
+        const item = selected[0]!;
+        const type = "relationBlock";
+        if (!relationInfo.value) return;
+        const relationPkField =
+            relationInfo.value.relationPrimaryKeyFields[
+                item[relationInfo.value.collectionField.field]
+            ]?.field;
+
+        const junctionField = relationInfo.value.junctionField.field;
+        const junctionPkField =
+            relationInfo.value.junctionPrimaryKeyField.field;
+
+        editsAtStart.value = {
+            ...getItemEdits(item),
+            [relationInfo.value.collectionField.field]:
+                item[relationInfo.value.collectionField.field],
+        };
+        if (!relationPkField) return;
+        currentlyEditing.value = get(item, [junctionPkField], null);
+        relatedPrimaryKey.value = get(
+            item,
+            [junctionField, relationPkField],
+            null
+        );
+        const nodeId = uuidv4();
+
+        insertNode({
+             id: nodeId,
+             junction: junctionCollection,
+             collection: item.collection,
+         });
+
+        // Create M2A relation
+        item[junctionPrimaryKeyField] = nodeId;
+        create(item);
+
+        // Add to M2A Store
+        const cleanedItem = cloneDeep(cleanItem(item));
+        m2aStore.create(
+            cleanedItem,
+            junctionPrimaryKeyField,
+            editorField.value
+        );
     }
     
     // [DIRECTUS_CORE][!MODIFIED!] from m2a-field
@@ -266,7 +307,6 @@ export function useRelationReference({
         item: DisplayItem,
         type: RelationNodeType = "relationBlock"
     ) {
-        console.log("editItem",item)
         if (!relationInfo.value) return;
 
         const relationPkField =
@@ -290,15 +330,13 @@ export function useRelationReference({
         editModalActive.value[type] = true;
         // [!MODIFIED!] `editingCollection` not needed
         // editingCollection.value = item[relationInfo.value.collectionField.field];
-        if (item.$type === "selected") newItem = true;
+
         if (item?.$type === "created" && !isItemSelected(item)) {
-            console.log("if here",editModalActive.value, item )
             currentlyEditing.value = null;
             relatedPrimaryKey.value = null;
             // [!MODIFIED!] `editingCollection` not needed
             // editingCollection.value = null;
         } else {
-            console.log("else here", editModalActive.value, item )
             if (!relationPkField) return;
             currentlyEditing.value = get(item, [junctionPkField], null);
             relatedPrimaryKey.value = get(
@@ -314,7 +352,6 @@ export function useRelationReference({
         item: Record<string, any>,
         insertNode: (attrs: RelationNodeAttrs) => void
     ) {
-        console.log("stageEdits,", item, insertNode);
         if (isEmpty(item)) return;
         
         if (newItem) {
