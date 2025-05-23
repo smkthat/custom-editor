@@ -22,6 +22,7 @@ import orderedList from "./ordered-list";
 import blockquote from "./blockquote";
 import table from "./table";
 import fullscreen from "./fullscreen";
+import docxImport from "./docx-import";
 import type { AnyExtension } from "@tiptap/core";
 import type { Tool, ToolSelection, InterfaceOption } from "../types";
 
@@ -56,6 +57,7 @@ const tools: Tool[] = [
     history.undo,
     history.redo,
     fullscreen,
+    docxImport,
 ];
 
 export const selectedTools = (

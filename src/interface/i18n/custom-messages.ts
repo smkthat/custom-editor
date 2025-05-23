@@ -56,6 +56,7 @@ export default {
         redo: "$t:wysiwyg_options.redo",
         table: "$t:wysiwyg_options.table",
         fullscreen: "$t:wysiwyg_options.fullscreen",
+        docxImport: "Import Word Document",
     },
     toolbar_mode: {
         title: "$t:interfaces.input-rich-text-html.toolbar",

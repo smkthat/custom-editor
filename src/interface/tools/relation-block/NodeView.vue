@@ -99,6 +99,13 @@
         if (!props.editor.isFocused)
             props.editor.commands.blur();
     };
+
+    const deleteNode = () => {
+        const pos = props.getPos?.();
+        if (pos !== undefined) {
+            props.editor.chain().focus().deleteRange({ from: pos, to: pos + props.node.nodeSize }).run();
+        }
+    };
 </script>
 
 

@@ -45,9 +45,7 @@
     import Document from "@tiptap/extension-document";
     import Text from "@tiptap/extension-text";
     import Paragraph from "@tiptap/extension-paragraph";
-    import Placeholder from "@tiptap/extension-placeholder";
-    import Dropcursor from "@tiptap/extension-dropcursor";
-    import Gapcursor from "@tiptap/extension-gapcursor";
+    import { Placeholder, Dropcursor, Gapcursor } from "@tiptap/extensions";
     import RelationBlock from "./tools/relation-block/node-extension";
     import RelationInlineBlock from "./tools/relation-inline-block/node-extension";
     import RelationMark from "./tools/relation-mark/node-extension";

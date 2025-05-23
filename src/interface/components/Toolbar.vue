@@ -50,7 +50,7 @@
                     <v-list-item-content>
                         <v-text-overflow :text="tool.name" />
                     </v-list-item-content>
-                    <v-list-item-hint>{{ translateShortcut(tool.shortcut as string[]) }}</v-list-item-hint>
+                    <v-list-item-hint>{{ translateShortcut(tool.shortcut) }}</v-list-item-hint>
                 </v-list-item>
             </v-list>
         </v-menu>
@@ -75,12 +75,13 @@
 
 <script setup lang="ts">
     import { ref, computed } from 'vue';
-    import { FloatingMenu, type Editor } from '@tiptap/vue-3';
+    import { type Editor } from '@tiptap/vue-3';
+    import { FloatingMenu } from '@tiptap/vue-3/menus';
     import ToolButton from './ToolButton.vue';
     import { translateShortcut } from '../directus-core/utils/translate-shortcut';
     import { useI18n } from "vue-i18n";
     import { useI18nFallback } from '../composables/use-i18n-fallback'
-    import type { FloatingMenuPluginProps } from '@tiptap/extension-floating-menu';
+
     import type { Tool, ToolbarMode } from '../types';
 
 
@@ -134,25 +135,24 @@
         const padding = parseInt(getComputedStyle(document.body)?.getPropertyValue('--theme--popover--menu--border-radius')?.replace('px', ''), 10) ?? 6;
 
         type FloatingMenuProps = {
-            editor: FloatingMenuPluginProps['editor'];
-            shouldShow: FloatingMenuPluginProps['shouldShow'];
-            tippyOptions: FloatingMenuPluginProps['tippyOptions'];
+            editor: Editor;
+            shouldShow: (props: { editor: Editor; view: any; state: any; oldState?: any; from: number; to: number; }) => boolean;
+            options: {
+                placement: string;
+                middleware: Array<{ name: string; options?: any }>;
+            };
         };
 
         const floatingMenuProps: FloatingMenuProps = {
             editor: props.editor,
             shouldShow: ({ editor }) => editor.isFocused,
-            tippyOptions: {
+            options: {
                 placement: 'top',
-                maxWidth: 'none',
-                zIndex: 500,
-                arrow: true,
-                popperOptions: {
-                    modifiers: [
-                        { name: 'arrow', options: { padding } },
-                        { name: 'preventOverflow', options: { boundary: props.editor.view.dom } },
-                    ],
-                },
+                middleware: [
+                    { name: 'offset', options: { mainAxis: 8 } },
+                    { name: 'flip' },
+                    { name: 'shift', options: { padding } },
+                ],
             },
         };
 

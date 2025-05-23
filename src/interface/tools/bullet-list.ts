@@ -1,7 +1,4 @@
-// https://tiptap.dev/api/nodes/bullet-list
-
-import BulletList from "@tiptap/extension-bullet-list";
-import ListItem from "@tiptap/extension-list-item";
+import { BulletList, ListItem } from "@tiptap/extension-list";
 import { defineTool } from "../lib";
 import customMessages from "../i18n/custom-messages";
 import type { Editor } from "@tiptap/core";
