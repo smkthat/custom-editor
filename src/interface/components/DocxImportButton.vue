@@ -96,13 +96,19 @@ const uploadImageToDirectus = async (imageBlob: Blob, filename: string): Promise
 
 // Helper function to process HTML and upload images
 const processImagesInHtml = async (html: string): Promise<string> => {
+    console.log('🖼️ Original HTML:', html.substring(0, 500) + '...');
+    
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const images = doc.querySelectorAll('img');
     
+    console.log(`🖼️ Found ${images.length} images to process`);
+    
     for (let i = 0; i < images.length; i++) {
         const img = images[i];
         const src = img.getAttribute('src');
+        
+        console.log(`🖼️ Processing image ${i + 1}: ${src?.substring(0, 50)}...`);
         
         if (src && src.startsWith('data:')) {
             try {
@@ -122,19 +128,33 @@ const processImagesInHtml = async (html: string): Promise<string> => {
                     // Upload to Directus
                     const fileId = await uploadImageToDirectus(imageBlob, filename);
                     
-                    // Replace src with Directus asset URL
-                    img.setAttribute('src', `/assets/${fileId}`);
+                    // Replace src with absolute Directus asset URL
+                    const assetUrl = `${window.location.origin}/assets/${fileId}`;
+                    img.setAttribute('src', assetUrl);
                     
-                    console.log(`Uploaded image ${i + 1} as file ID: ${fileId}`);
+                    // Ensure the image has proper attributes
+                    if (!img.getAttribute('alt')) {
+                        img.setAttribute('alt', `Imported image ${i + 1}`);
+                    }
+                    
+                    console.log(`✅ Uploaded image ${i + 1} as file ID: ${fileId}, URL: ${assetUrl}`);
                 }
             } catch (error) {
-                console.error(`Error processing image ${i + 1}:`, error);
+                console.error(`❌ Error processing image ${i + 1}:`, error);
                 // Keep original base64 if upload fails
             }
         }
     }
     
-    return doc.body.innerHTML;
+    // Get the full HTML content, not just body
+    const processedHtml = new XMLSerializer().serializeToString(doc);
+    const bodyMatch = processedHtml.match(/<body[^>]*>(.*?)<\/body>/s);
+    const finalHtml = bodyMatch ? bodyMatch[1] : processedHtml;
+    
+    console.log('🖼️ Processed HTML:', finalHtml.substring(0, 500) + '...');
+    console.log(`🖼️ Final image count: ${(finalHtml.match(/<img/g) || []).length}`);
+    
+    return finalHtml;
 };
 
 const handleFileSelect = async (event: Event) => {

@@ -23,6 +23,7 @@ import blockquote from "./blockquote";
 import table from "./table";
 import fullscreen from "./fullscreen";
 import docxImport from "./docx-import";
+import image from "./image";
 import type { AnyExtension } from "@tiptap/core";
 import type { Tool, ToolSelection, InterfaceOption } from "../types";
 
@@ -58,6 +59,7 @@ const tools: Tool[] = [
     history.redo,
     fullscreen,
     docxImport,
+    image,
 ];
 
 export const selectedTools = (

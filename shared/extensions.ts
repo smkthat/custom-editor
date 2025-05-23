@@ -19,6 +19,7 @@ import Code from "@tiptap/extension-code";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
+import Image from "@tiptap/extension-image";
 
 export default [
     Document,
@@ -44,6 +45,7 @@ export default [
     TableRow,
     TableCell,
     TextAlign,
+    Image,
     Dropcursor,
     Gapcursor,
     UndoRedo,
