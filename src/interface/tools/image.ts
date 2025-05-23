@@ -3,16 +3,24 @@
 import Image from "@tiptap/extension-image";
 import customMessages from "../i18n/custom-messages";
 import { defineTool } from "../lib";
+import ImageButton from "./image/ImageButton.vue";
 
 export default defineTool({
     key: "image",
     name: customMessages.tools.image,
     icon: "image",
-    extension: [Image],
+    extension: [Image.configure({
+        HTMLAttributes: {
+            class: 'custom-editor-image',
+        },
+        allowBase64: true,
+        inline: false,
+    })],
     excludeFromOptions: false,
-    excludeFromToolbar: true, // We don't need a separate toolbar button for images since they're inserted via DOCX import
+    excludeFromToolbar: false, // Show in toolbar
+    toolbarButton: ImageButton,
     action: () => {
-        // No direct action needed - images are inserted via DOCX import or other means
+        // Action will be handled by the custom toolbar button component
     },
     disabled: () => false,
     active: () => false,

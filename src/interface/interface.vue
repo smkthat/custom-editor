@@ -239,14 +239,8 @@
     }
 
     .flexible-editor-wrapper:focus-within {
-        border-color: var(
-            --theme--form--field--input--border-color-focus,
-            var(--primary)
-        );
-        box-shadow: var(
-            --theme--form--field--input--box-shadow-focus,
-            0 0 16px -8px var(--v-input-box-shadow-color-focus)
-        );
+        border-color: var(--theme--primary, var(--primary));
+        box-shadow: 0 0 16px -8px var(--theme--primary, var(--primary));
     }
 
     .disabled {
@@ -595,6 +589,44 @@
     .flexible-editor
         :deep(.ProseMirror .ProseMirror-gapcursor:last-child:after) {
         bottom: 0;
+    }
+
+    /* Image wrapper styles for custom-editor */
+    .flexible-editor :deep(.image-wrapper) {
+        margin: 1rem 0;
+        display: block;
+    }
+
+    .flexible-editor :deep(.image-wrapper.image-center) {
+        text-align: center;
+    }
+
+    .flexible-editor :deep(.image-wrapper.image-right) {
+        text-align: right;
+    }
+
+    .flexible-editor :deep(.image-wrapper.image-left) {
+        text-align: left;
+    }
+
+    .flexible-editor :deep(.custom-editor-image) {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--theme--border-radius);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .flexible-editor :deep(.custom-editor-image:hover) {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .flexible-editor :deep(.image-caption) {
+        margin: 0.5rem 0 0 0;
+        font-size: 0.875rem;
+        font-style: italic;
+        color: var(--theme--foreground-subdued);
+        text-align: inherit;
     }
 </style>
 
