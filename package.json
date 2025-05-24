@@ -48,6 +48,11 @@
                 "source": "src/interface/index.ts"
             },
             {
+                "type": "interface",
+                "name": "plate-interface",
+                "source": "src/plate-interface/index.ts"
+            },
+            {
                 "type": "display",
                 "name": "display",
                 "source": "src/display/index.ts"
@@ -87,6 +92,7 @@
         "@tiptap/core": "3.0.0-beta.5",
         "@tiptap/extension-blockquote": "3.0.0-beta.5",
         "@tiptap/extension-bold": "3.0.0-beta.5",
+        "@tiptap/extension-bubble-menu": "^3.0.0-beta.5",
         "@tiptap/extension-code": "3.0.0-beta.5",
         "@tiptap/extension-code-block": "3.0.0-beta.5",
         "@tiptap/extension-document": "3.0.0-beta.5",
@@ -105,6 +111,25 @@
         "@tiptap/extension-text": "3.0.0-beta.5",
         "@tiptap/extension-text-align": "3.0.0-beta.5",
         "@tiptap/extensions": "3.0.0-beta.5",
+        "@udecode/cn": "^48.0.3",
+        "@udecode/plate": "^48.0.5",
+        "@udecode/plate-alignment": "^48.0.0",
+        "@udecode/plate-basic-elements": "^48.0.0",
+        "@udecode/plate-basic-marks": "^48.0.0",
+        "@udecode/plate-caption": "^48.0.0",
+        "@udecode/plate-common": "^41.0.13",
+        "@udecode/plate-heading": "^48.0.0",
+        "@udecode/plate-indent": "^48.0.0",
+        "@udecode/plate-link": "^48.0.0",
+        "@udecode/plate-list": "^48.0.0",
+        "@udecode/plate-markdown": "^48.0.2",
+        "@udecode/plate-media": "^48.0.0",
+        "@udecode/plate-serializer-html": "^21.5.1",
+        "@udecode/plate-serializer-md": "^36.4.0",
+        "@udecode/plate-table": "^48.0.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "tailwind-merge": "^3.3.0",
         "tiptap-render-view": "^1.0.2"
     }
 }

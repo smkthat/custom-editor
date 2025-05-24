@@ -24,6 +24,8 @@ import table from "./table";
 import fullscreen from "./fullscreen";
 import docxImport from "./docx-import";
 import image from "./image";
+import indent from "./indent";
+import outdent from "./outdent";
 import type { AnyExtension } from "@tiptap/core";
 import type { Tool, ToolSelection, InterfaceOption } from "../types";
 
@@ -60,6 +62,8 @@ const tools: Tool[] = [
     fullscreen,
     docxImport,
     image,
+    indent,
+    outdent,
 ];
 
 export const selectedTools = (

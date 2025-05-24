@@ -6,6 +6,7 @@
         <v-notice
             v-for="errorMsg in errors"
             type="warning"
+            :key="errorMsg"
         >
             <span>{{ t(errorMsg) }}</span>
         </v-notice>
@@ -33,12 +34,13 @@
             }"
             class="flexible-editor"
         />
+
     </div>
 </template>
 
 <script setup lang="ts">
     // Imports
-    import { ref, toRef, watch, provide, computed } from "vue";
+    import { ref, toRef, watch, provide, computed, onMounted } from "vue";
     import { useEditor, EditorContent, type JSONContent } from "@tiptap/vue-3";
     import { v4 as uuidv4 } from "uuid";
     import Toolbar from "./components/Toolbar.vue";
@@ -205,6 +207,27 @@
 
         watch(m2aRelation.fetchedItems, initFetchedItems);
     }
+
+    // Lifecycle
+    onMounted(() => {
+        // Handle image clicks for links
+        if (editor.value) {
+            const editorElement = editor.value.view.dom;
+            
+            editorElement.addEventListener('click', (event: Event) => {
+                const target = event.target as HTMLElement;
+                if (target.tagName === 'IMG' && target.hasAttribute('data-link')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    const link = target.getAttribute('data-link');
+                    if (link) {
+                        window.open(link, '_blank', 'noopener,noreferrer');
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 <style scoped>
@@ -591,42 +614,22 @@
         bottom: 0;
     }
 
-    /* Image wrapper styles for custom-editor */
-    .flexible-editor :deep(.image-wrapper) {
-        margin: 1rem 0;
-        display: block;
-    }
 
-    .flexible-editor :deep(.image-wrapper.image-center) {
-        text-align: center;
-    }
 
-    .flexible-editor :deep(.image-wrapper.image-right) {
-        text-align: right;
-    }
+    /* Indent styles */
+    .flexible-editor :deep(.indent-1) { margin-left: 2rem; }
+    .flexible-editor :deep(.indent-2) { margin-left: 4rem; }
+    .flexible-editor :deep(.indent-3) { margin-left: 6rem; }
+    .flexible-editor :deep(.indent-4) { margin-left: 8rem; }
+    .flexible-editor :deep(.indent-5) { margin-left: 10rem; }
 
-    .flexible-editor :deep(.image-wrapper.image-left) {
-        text-align: left;
-    }
-
-    .flexible-editor :deep(.custom-editor-image) {
-        max-width: 100%;
-        height: auto;
-        border-radius: var(--theme--border-radius);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.2s ease;
-    }
-
-    .flexible-editor :deep(.custom-editor-image:hover) {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .flexible-editor :deep(.image-caption) {
-        margin: 0.5rem 0 0 0;
-        font-size: 0.875rem;
-        font-style: italic;
-        color: var(--theme--foreground-subdued);
-        text-align: inherit;
+    /* Responsive indent styles for smaller screens */
+    @media (max-width: 768px) {
+        .flexible-editor :deep(.indent-1) { margin-left: 1rem; }
+        .flexible-editor :deep(.indent-2) { margin-left: 2rem; }
+        .flexible-editor :deep(.indent-3) { margin-left: 3rem; }
+        .flexible-editor :deep(.indent-4) { margin-left: 4rem; }
+        .flexible-editor :deep(.indent-5) { margin-left: 5rem; }
     }
 </style>
 
