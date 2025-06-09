@@ -24,7 +24,7 @@
                 />
             </v-button>
         </template>
-        
+
         <v-list>
             <v-list-item
                 clickable
@@ -39,7 +39,7 @@
             <!-- Image settings - only show when image is selected -->
             <template v-if="isImageSelected">
                 <v-divider />
-                
+
                 <v-list-group>
                     <template #activator>
                         <v-text-overflow :text="t('image.size')" />
@@ -111,7 +111,7 @@
         persistent
     >
         <v-sheet>
-            <v-toolbar color="transparent">
+            <v-toolbar color="transparent" class="dialog-title">
                 <v-toolbar-title>{{ t('image.select_image') }}</v-toolbar-title>
                 <v-spacer />
                 <v-button
@@ -247,7 +247,7 @@ const insertImageFromUrl = () => {
     if (!imageUrl.value) return;
 
     // Insert image with default styling
-    props.editor.chain().focus().setImage({ 
+    props.editor.chain().focus().setImage({
         src: imageUrl.value,
         size: 'medium',
         alignment: 'left',
@@ -268,9 +268,9 @@ const handleFileInputChange = async (event: Event) => {
 
     const file = files[0];
     if (!file) return;
-    
+
     uploading.value = true;
-    
+
     try {
         // Upload using Directus's native file upload
         const formData = new FormData();
@@ -287,7 +287,7 @@ const handleFileInputChange = async (event: Event) => {
         const assetUrl = `${window.location.origin}/assets/${fileData.id}`;
 
         // Insert image with default styling
-        props.editor.chain().focus().setImage({ 
+        props.editor.chain().focus().setImage({
             src: assetUrl,
             size: 'medium',
             alignment: 'left',
@@ -312,12 +312,12 @@ const handleFileInputChange = async (event: Event) => {
 const updateImageSize = (size: string) => {
     console.log('Updating image size to:', size);
     currentSize.value = size;
-    
+
     // Update the image attributes directly
     props.editor.chain().focus().updateAttributes('customImage', {
         size: size,
     }).run();
-    
+
     console.log('Size updated to:', size);
 };
 
@@ -327,6 +327,15 @@ const removeImage = () => {
 </script>
 
 <style scoped>
+.dialog-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 24px;
+    font-weight: 500;
+    padding: 24px;
+}
+
 .dialog-content {
     padding: 24px;
     max-height: 60vh;
@@ -411,4 +420,4 @@ const removeImage = () => {
     color: var(--theme--foreground-subdued);
     text-align: inherit;
 }
-</style> 
+</style>
