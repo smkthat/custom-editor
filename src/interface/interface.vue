@@ -47,7 +47,12 @@ import Toolbar from "./components/Toolbar.vue";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
-import {Placeholder, Dropcursor, Gapcursor} from "@tiptap/extensions";
+import {
+    Placeholder,
+    Dropcursor,
+    Gapcursor,
+    Focus
+} from "@tiptap/extensions";
 import RelationBlock from "./tools/relation-block/node-extension";
 import RelationInlineBlock from "./tools/relation-inline-block/node-extension";
 import RelationMark from "./tools/relation-mark/node-extension";
@@ -126,11 +131,16 @@ const editor = useEditor({
         Placeholder.configure({placeholder: props.placeholder}),
         Dropcursor,
         Gapcursor,
+        Focus.configure({
+            className: 'has-focus',
+            mode: 'shallowest',
+        }),
         RelationBlock,
         RelationInlineBlock,
         RelationMark,
         ...toolsExtensions(props.tools),
     ],
+    autofocus: true,
     onCreate() {
         // called twice to reset the items even if props.value (below) is empty
         resetRelationNodes();
@@ -685,6 +695,14 @@ onMounted(() => {
     ul[data-type='taskList'] {
         margin: 0;
     }
+}
+
+/* Focus styles */
+.flexible-editor :deep(.has-focus) {
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px var(--theme--primary);
+    padding: 0.5rem 0.5rem !important;
+    transition: padding 0.3s ease-in-out;
 }
 </style>
 
