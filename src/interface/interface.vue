@@ -681,7 +681,10 @@ onMounted(() => {
         > label {
             flex: 0 0 auto;
             margin-right: 0.5rem;
+            margin-top: 0.2rem;
             user-select: none;
+            height: 24px;
+            width: 24px;
         }
 
         > div {
@@ -691,7 +694,44 @@ onMounted(() => {
     }
 
     input[type='checkbox'] {
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: var(--theme--form--field--input--background, var(--background-page));
+        margin: 0 0.5rem 0 0;
+        font: inherit;
+        color: currentColor;
+        width: 1.15em;
+        height: 1.15em;
+        border: 1px solid var(--theme--form--field--input--border-color, var(--border-normal));
+        border-radius: 0.15em;
+        transform: translateY(0.15em);
+        display: grid;
+        place-content: center;
         cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    input[type='checkbox']:hover {
+        border-color: var(--theme--primary);
+    }
+
+    input[type='checkbox']:checked {
+        background-color: var(--theme--primary);
+        border-color: var(--theme--primary);
+    }
+
+    input[type='checkbox']::before {
+        content: '';
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em white;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    input[type='checkbox']:checked::before {
+        transform: scale(1);
     }
 
     ul[data-type='taskList'] {
