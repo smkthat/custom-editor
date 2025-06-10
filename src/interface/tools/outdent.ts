@@ -2,9 +2,10 @@ import { defineTool } from "../lib";
 import customMessages from "../i18n/custom-messages";
 
 export default defineTool({
-    key: "outdent", 
+    key: "outdent",
     name: customMessages.tools.outdent,
     icon: "format_indent_decrease",
+    shortcut: ["shift", "tab"],
     extension: [], // Extension is already added by indent tool
     excludeFromOptions: false,
     excludeFromToolbar: false,
@@ -13,4 +14,4 @@ export default defineTool({
     },
     disabled: (editor) => !editor.can().outdent(),
     active: () => false,
-}); 
+});
