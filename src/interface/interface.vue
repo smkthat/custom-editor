@@ -47,6 +47,7 @@ import Toolbar from "./components/Toolbar.vue";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
+import Typography from '@tiptap/extension-typography'
 import {
     Placeholder,
     Dropcursor,
@@ -128,6 +129,7 @@ const editor = useEditor({
         ),
         Text,
         Paragraph,
+        Typography,
         Placeholder.configure({placeholder: props.placeholder}),
         Dropcursor,
         Gapcursor,
