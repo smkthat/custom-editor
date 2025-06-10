@@ -20,6 +20,7 @@ import horizontalRule from "./horizontal-rule";
 import textAlign from "./text-align";
 import bulletList from "./bullet-list";
 import orderedList from "./ordered-list";
+import taskList from "./task-list";
 import blockquote from "./blockquote";
 import table from "./table";
 import fullscreen from "./fullscreen";
@@ -57,6 +58,7 @@ const tools: Tool[] = [
     textAlign,
     bulletList,
     orderedList,
+    taskList,
     blockquote,
     table,
     history.undo,

@@ -52,6 +52,7 @@ export default {
         hr: "$t:wysiwyg_options.hr",
         bullet_list: "$t:wysiwyg_options.bullist",
         ordered_list: "$t:wysiwyg_options.numlist",
+        task_list: "Task List",
         blockquote: "$t:wysiwyg_options.blockquote",
         undo: "$t:wysiwyg_options.undo",
         redo: "$t:wysiwyg_options.redo",
