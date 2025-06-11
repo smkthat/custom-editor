@@ -2,7 +2,8 @@
 
 // [START] different from original
 // import { useFieldsStore } from '@/stores/fields';
-import { useStores } from "@directus/extensions-sdk";
+import { useStores } from '@directus/extensions-sdk';
+
 // [END] different from original
 
 /**
@@ -20,41 +21,34 @@ import { useStores } from "@directus/extensions-sdk";
  * addRelatedPrimaryKeyToFields(collection, fields);
  * // => ['title', 'user.name', 'user.id'];
  */
-export function addRelatedPrimaryKeyToFields(
-    currentCollection: string,
-    fields: string[]
-): string[] {
-    if (!fields?.length) return [];
+export function addRelatedPrimaryKeyToFields(currentCollection: string, fields: string[]): string[] {
+  if (!fields?.length) return [];
 
-    // [START] different from original
-    const { useFieldsStore } = useStores();
-    // [END] different from original
+  // [START] different from original
+  const { useFieldsStore } = useStores();
+  // [END] different from original
 
-    const fieldsStore = useFieldsStore();
+  const fieldsStore = useFieldsStore();
 
-    const sanitizedFields: string[] = [];
+  const sanitizedFields: string[] = [];
 
-    for (const fieldName of fields) {
-        sanitizedFields.push(fieldName);
+  for (const fieldName of fields) {
+    sanitizedFields.push(fieldName);
 
-        if (!fieldName.includes(".")) continue;
-        const fieldParts = fieldName.split(".");
+    if (!fieldName.includes('.')) continue;
+    const fieldParts = fieldName.split('.');
 
-        const field = fieldsStore.getField(currentCollection, fieldName);
-        if (!field) continue;
+    const field = fieldsStore.getField(currentCollection, fieldName);
+    if (!field) continue;
 
-        const primaryKeyField = fieldsStore.getPrimaryKeyFieldForCollection(
-            field.collection
-        );
+    const primaryKeyField = fieldsStore.getPrimaryKeyFieldForCollection(field.collection);
 
-        const fieldToInclude =
-            primaryKeyField &&
-            fieldParts.slice(0, -1).concat(primaryKeyField.field).join(".");
+    const fieldToInclude = primaryKeyField && fieldParts.slice(0, -1).concat(primaryKeyField.field).join('.');
 
-        if (fieldToInclude && !sanitizedFields.includes(fieldToInclude)) {
-            sanitizedFields.push(fieldToInclude);
-        }
+    if (fieldToInclude && !sanitizedFields.includes(fieldToInclude)) {
+      sanitizedFields.push(fieldToInclude);
     }
+  }
 
-    return sanitizedFields;
+  return sanitizedFields;
 }

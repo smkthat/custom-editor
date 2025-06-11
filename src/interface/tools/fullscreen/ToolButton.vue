@@ -1,20 +1,22 @@
 <template>
-    <ToolButton :title :icon :disabled :active="fullscreen" :action="toggleFullscreen" />
+  <ToolButton :title :icon :disabled :active="fullscreen" :action="toggleFullscreen" />
 </template>
 
 <script setup lang="ts">
-    import { inject, computed, type Ref } from 'vue'
-    import ToolButton from "../../components/ToolButton.vue";
-    import type { CustomToolButtonProps } from "../../types";
+  import { computed, inject } from 'vue';
+  import type { CustomToolButtonProps } from '../../types';
+  import type { Ref } from 'vue';
 
-    const props = defineProps<CustomToolButtonProps>();
+  import ToolButton from '../../components/ToolButton.vue';
 
-    const fullscreen = inject('fullscreen') as Ref;
+  const props = defineProps<CustomToolButtonProps>();
 
-    function toggleFullscreen() {
-        fullscreen.value = !fullscreen.value;
-        props.editor.chain().focus();
-    }
+  const fullscreen = inject('fullscreen') as Ref;
 
-    const icon = computed(() => fullscreen.value ? 'fullscreen_exit' : 'fullscreen');
+  function toggleFullscreen() {
+    fullscreen.value = !fullscreen.value;
+    props.editor.chain().focus();
+  }
+
+  const icon = computed(() => (fullscreen.value ? 'fullscreen_exit' : 'fullscreen'));
 </script>

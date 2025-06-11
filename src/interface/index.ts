@@ -6,328 +6,322 @@
 
 // TODO: [Stage 2][relation marks] There is a slot in the drawer component to add custom buttons. This could be useful for relation marks in order to remove it.
 
-import { defineInterface, useStores } from "@directus/extensions-sdk";
-import component from "./interface.vue";
-import { interfaceOptions, interfaceOptionsDefault } from "./tools";
-import customMessages from "./i18n/custom-messages";
+import { defineInterface, useStores } from '@directus/extensions-sdk';
+
+import customMessages from './i18n/custom-messages';
+import component from './interface.vue';
+import { interfaceOptions, interfaceOptionsDefault } from './tools';
 
 export default defineInterface({
-    id: "flexible-editor-interface",
-    name: "Flexible Editor",
-    icon: "description",
-    description: customMessages.extension_description,
-    component,
-    types: ["json"],
-    // NOTE: We can’t use `localTypes: ["m2a"]`, because the generated junction collection won’t have an `id` of `uuid`, and we don’t want the relation-nodes to be required
-    // localTypes: ["m2a"],
-    group: "standard",
-    recommendedDisplays: ["flexible-editor-display"],
-    options: ({ collection, $state }: any) => {
-        const relationReferenceOptions = useRelationReferenceOptions();
+  id: 'flexible-editor-interface',
+  name: 'Flexible Editor',
+  icon: 'description',
+  description: customMessages.extension_description,
+  component,
+  types: ['json'],
+  // NOTE: We can’t use `localTypes: ["m2a"]`, because the generated junction collection won’t have an `id` of `uuid`, and we don’t want the relation-nodes to be required
+  // localTypes: ["m2a"],
+  group: 'standard',
+  recommendedDisplays: ['flexible-editor-display'],
+  options: ({ collection, $state }: any) => {
+    const relationReferenceOptions = useRelationReferenceOptions();
 
-        return [
-            ...relationReferenceOptions,
+    return [
+      ...relationReferenceOptions,
+      {
+        field: 'placeholder',
+        name: '$t:placeholder',
+        meta: {
+          interface: 'system-input-translated-string',
+          options: {
+            placeholder: '$t:enter_a_placeholder',
+          },
+        },
+      },
+      {
+        field: 'tools',
+        name: customMessages.tools_title,
+        type: 'json',
+        schema: {
+          default_value: interfaceOptionsDefault,
+        },
+        meta: {
+          width: 'full',
+          interface: 'select-multiple-dropdown',
+          options: {
+            choices: interfaceOptions,
+          },
+        },
+      },
+      {
+        field: 'toolbarMode',
+        name: customMessages.toolbar_mode.title,
+        type: 'string',
+        meta: {
+          width: 'half',
+          interface: 'select-dropdown',
+          options: {
+            choices: [
+              {
+                text: customMessages.toolbar_mode.static,
+                value: 'static',
+              },
+              {
+                text: customMessages.toolbar_mode.sticky,
+                value: 'sticky',
+              },
+              {
+                text: customMessages.toolbar_mode.floating,
+                value: 'floating',
+              },
+            ],
+          },
+        },
+        schema: {
+          default_value: 'static',
+        },
+      },
+      {
+        field: 'displayFormat',
+        name: customMessages.formats_appearance,
+        type: 'boolean',
+        meta: {
+          width: 'half',
+          interface: 'boolean',
+          options: {
+            label: customMessages.formats_as_button,
+          },
+        },
+        schema: {
+          default_value: false,
+        },
+      },
+      {
+        field: 'inputMode',
+        name: customMessages.input_mode.title,
+        type: 'string',
+        meta: {
+          width: 'half',
+          interface: 'select-dropdown',
+          options: {
+            choices: [
+              {
+                text: customMessages.input_mode.multi,
+                value: 'multi',
+              },
+              {
+                text: customMessages.input_mode.single,
+                value: 'single',
+              },
+            ],
+          },
+        },
+        schema: {
+          default_value: 'multi',
+        },
+      },
+      {
+        field: 'editorHeight',
+        name: customMessages.editor_height.title,
+        type: 'string',
+        meta: {
+          width: 'half',
+          interface: 'select-dropdown',
+          options: {
+            choices: [
+              {
+                text: customMessages.editor_height.grow_till_overflow,
+                value: 'height-grow-till-overflow',
+              },
+              {
+                text: customMessages.editor_height.grow,
+                value: 'height-grow',
+              },
+              {
+                text: customMessages.editor_height.fixed,
+                value: 'height-fixed',
+              },
+            ],
+          },
+        },
+        schema: {
+          default_value: 'height-grow-till-overflow',
+        },
+      },
+      {
+        field: 'font',
+        name: '$t:font',
+        type: 'string',
+        meta: {
+          width: 'half',
+          interface: 'select-dropdown',
+          options: {
+            choices: [
+              {
+                text: '$t:sans_serif',
+                value: 'sans-serif',
+              },
+              {
+                text: '$t:monospace',
+                value: 'monospace',
+              },
+              {
+                text: '$t:serif',
+                value: 'serif',
+              },
+            ],
+          },
+        },
+        schema: {
+          default_value: 'sans-serif',
+        },
+      },
+      {
+        field: 'spellcheck',
+        name: customMessages.spellcheck,
+        type: 'boolean',
+        meta: {
+          width: 'half',
+          interface: 'boolean',
+        },
+        schema: {
+          default_value: false,
+        },
+      },
+    ];
+
+    function useRelationReferenceOptions() {
+      const relationNodes = getRelatedAnyCollections();
+
+      const options: Record<string, any>[] = [
+        {
+          field: 'm2aField',
+          type: 'string',
+          name: customMessages.m2a_field,
+          meta: {
+            width: relationNodes ? 'half' : 'full',
+            interface: 'system-field',
+            options: {
+              collectionName: collection,
+              typeAllowList: ['alias'],
+              allowNone: true,
+            },
+            note: '$t:optional',
+          },
+        },
+      ];
+
+      if (relationNodes) {
+        options.push(
+          ...[
             {
-                field: "placeholder",
-                name: "$t:placeholder",
-                meta: {
-                    interface: "system-input-translated-string",
-                    options: {
-                        placeholder: "$t:enter_a_placeholder",
-                    },
+              field: 'relation-blocks',
+              type: 'json',
+              name: customMessages.relation_nodes.blocks,
+              schema: {
+                default_value: relationNodes.defaults,
+              },
+              meta: {
+                width: 'half',
+                interface: 'select-multiple-dropdown',
+                options: {
+                  choices: relationNodes.options,
+                  allowNone: true,
                 },
+              },
             },
             {
-                field: "tools",
-                name: customMessages.tools_title,
-                type: "json",
-                schema: {
-                    default_value: interfaceOptionsDefault,
+              field: 'relation-inline-blocks',
+              type: 'json',
+              name: customMessages.relation_nodes.inline_blocks,
+              meta: {
+                width: 'half',
+                interface: 'select-multiple-dropdown',
+                options: {
+                  choices: relationNodes.options,
+                  allowNone: true,
                 },
-                meta: {
-                    width: "full",
-                    interface: "select-multiple-dropdown",
-                    options: {
-                        choices: interfaceOptions,
-                    },
-                },
+              },
             },
             {
-                field: "toolbarMode",
-                name: customMessages.toolbar_mode.title,
-                type: "string",
-                meta: {
-                    width: "half",
-                    interface: "select-dropdown",
-                    options: {
-                        choices: [
-                            {
-                                text: customMessages.toolbar_mode.static,
-                                value: "static",
-                            },
-                            {
-                                text: customMessages.toolbar_mode.sticky,
-                                value: "sticky",
-                            },
-                            {
-                                text: customMessages.toolbar_mode.floating,
-                                value: "floating",
-                            },
-                        ],
-                    },
+              field: 'relation-marks',
+              type: 'json',
+              name: customMessages.relation_nodes.marks,
+              meta: {
+                width: 'half',
+                interface: 'select-multiple-dropdown',
+                options: {
+                  choices: relationNodes.options,
+                  allowNone: true,
                 },
-                schema: {
-                    default_value: "static",
-                },
+              },
             },
-            {
-                field: "displayFormat",
-                name: customMessages.formats_appearance,
-                type: "boolean",
-                meta: {
-                    width: "half",
-                    interface: "boolean",
-                    options: {
-                        label: customMessages.formats_as_button,
-                    },
-                },
-                schema: {
-                    default_value: false,
-                },
+          ]
+        );
+      } else {
+        options.unshift({
+          field: 'warning',
+          type: 'alias',
+          meta: {
+            width: 'full',
+            interface: 'presentation-notice',
+            options: {
+              color: 'warning',
+              icon: 'warning',
+              text: customMessages.invalid_m2a_field,
             },
-            {
-                field: "inputMode",
-                name: customMessages.input_mode.title,
-                type: "string",
-                meta: {
-                    width: "half",
-                    interface: "select-dropdown",
-                    options: {
-                        choices: [
-                            {
-                                text: customMessages.input_mode.multi,
-                                value: "multi",
-                            },
-                            {
-                                text: customMessages.input_mode.single,
-                                value: "single",
-                            },
-                        ],
-                    },
+            hidden: true,
+            conditions: [
+              {
+                rule: {
+                  _and: [{ m2aField: { _nnull: true } }],
                 },
-                schema: {
-                    default_value: "multi",
-                },
-            },
-            {
-                field: "editorHeight",
-                name: customMessages.editor_height.title,
-                type: "string",
-                meta: {
-                    width: "half",
-                    interface: "select-dropdown",
-                    options: {
-                        choices: [
-                            {
-                                text: customMessages.editor_height
-                                    .grow_till_overflow,
-                                value: "height-grow-till-overflow",
-                            },
-                            {
-                                text: customMessages.editor_height.grow,
-                                value: "height-grow",
-                            },
-                            {
-                                text: customMessages.editor_height.fixed,
-                                value: "height-fixed",
-                            },
-                        ],
-                    },
-                },
-                schema: {
-                    default_value: "height-grow-till-overflow",
-                },
-            },
-            {
-                field: "font",
-                name: "$t:font",
-                type: "string",
-                meta: {
-                    width: "half",
-                    interface: "select-dropdown",
-                    options: {
-                        choices: [
-                            {
-                                text: "$t:sans_serif",
-                                value: "sans-serif",
-                            },
-                            {
-                                text: "$t:monospace",
-                                value: "monospace",
-                            },
-                            {
-                                text: "$t:serif",
-                                value: "serif",
-                            },
-                        ],
-                    },
-                },
-                schema: {
-                    default_value: "sans-serif",
-                },
-            },
-            {
-                field: "spellcheck",
-                name: customMessages.spellcheck,
-                type: "boolean",
-                meta: {
-                    width: "half",
-                    interface: "boolean",
-                },
-                schema: {
-                    default_value: false,
-                },
-            },
-        ];
+                hidden: false,
+              },
+            ],
+          },
+        });
+      }
 
-        function useRelationReferenceOptions() {
-            const relationNodes = getRelatedAnyCollections();
+      return options;
 
-            const options: Record<string, any>[] = [
-                {
-                    field: "m2aField",
-                    type: "string",
-                    name: customMessages.m2a_field,
-                    meta: {
-                        width: relationNodes ? "half" : "full",
-                        interface: "system-field",
-                        options: {
-                            collectionName: collection,
-                            typeAllowList: ["alias"],
-                            allowNone: true,
-                        },
-                        note: "$t:optional",
-                    },
-                },
-            ];
+      function getRelatedAnyCollections() {
+        const m2aField = $state?.field?.meta?.options?.m2aField;
+        if (!m2aField) return;
 
-            if (relationNodes) {
-                options.push(
-                    ...[
-                        {
-                            field: "relation-blocks",
-                            type: "json",
-                            name: customMessages.relation_nodes.blocks,
-                            schema: {
-                                default_value: relationNodes.defaults,
-                            },
-                            meta: {
-                                width: "half",
-                                interface: "select-multiple-dropdown",
-                                options: {
-                                    choices: relationNodes.options,
-                                    allowNone: true,
-                                },
-                            },
-                        },
-                        {
-                            field: "relation-inline-blocks",
-                            type: "json",
-                            name: customMessages.relation_nodes.inline_blocks,
-                            meta: {
-                                width: "half",
-                                interface: "select-multiple-dropdown",
-                                options: {
-                                    choices: relationNodes.options,
-                                    allowNone: true,
-                                },
-                            },
-                        },
-                        {
-                            field: "relation-marks",
-                            type: "json",
-                            name: customMessages.relation_nodes.marks,
-                            meta: {
-                                width: "half",
-                                interface: "select-multiple-dropdown",
-                                options: {
-                                    choices: relationNodes.options,
-                                    allowNone: true,
-                                },
-                            },
-                        },
-                    ]
-                );
-            } else {
-                options.unshift({
-                    field: "warning",
-                    type: "alias",
-                    meta: {
-                        width: "full",
-                        interface: "presentation-notice",
-                        options: {
-                            color: "warning",
-                            icon: "warning",
-                            text: customMessages.invalid_m2a_field,
-                        },
-                        hidden: true,
-                        conditions: [
-                            {
-                                rule: {
-                                    _and: [{ m2aField: { _nnull: true } }],
-                                },
-                                hidden: false,
-                            },
-                        ],
-                    },
-                });
-            }
+        const { useRelationsStore, useCollectionsStore } = useStores();
+        if (!useRelationsStore || !useCollectionsStore) return;
 
-            return options;
+        const relationStore = useRelationsStore();
+        const m2aRelations = relationStore.getRelationsForField(collection, m2aField);
 
-            function getRelatedAnyCollections() {
-                const m2aField = $state?.field?.meta?.options?.m2aField;
-                if (!m2aField) return;
+        if (!m2aRelations.length) return;
 
-                const { useRelationsStore, useCollectionsStore } = useStores();
-                if (!useRelationsStore || !useCollectionsStore) return;
+        const relationNodesValues = m2aRelations.find((item: any) => item.meta?.one_allowed_collections?.length)?.meta
+          ?.one_allowed_collections;
 
-                const relationStore = useRelationsStore();
-                const m2aRelations = relationStore.getRelationsForField(
-                    collection,
-                    m2aField
-                );
+        if (!relationNodesValues.length) return;
 
-                if (!m2aRelations.length) return;
+        const collectionsStore = useCollectionsStore();
+        collectionsStore.collection;
 
-                const relationNodesValues = m2aRelations.find(
-                    (item: any) => item.meta?.one_allowed_collections?.length
-                )?.meta?.one_allowed_collections;
+        const relationNodesOptions = collectionsStore.collections
+          .filter((item: any) => relationNodesValues.includes(item.collection))
+          .map((item: any) => ({
+            text: item.name,
+            value: item.collection,
+          }));
 
-                if (!relationNodesValues.length) return;
+        if (!relationNodesOptions.length) return;
 
-                const collectionsStore = useCollectionsStore();
-                collectionsStore.collection;
-
-                const relationNodesOptions = collectionsStore.collections
-                    .filter((item: any) =>
-                        relationNodesValues.includes(item.collection)
-                    )
-                    .map((item: any) => ({
-                        text: item.name,
-                        value: item.collection,
-                    }));
-
-                if (!relationNodesOptions.length) return;
-
-                return {
-                    defaults: relationNodesValues,
-                    options: relationNodesOptions,
-                };
-            }
-        }
-    },
-    preview: `<svg width="156" height="96" viewBox="0 0 156 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+        return {
+          defaults: relationNodesValues,
+          options: relationNodesOptions,
+        };
+      }
+    }
+  },
+  preview: `<svg width="156" height="96" viewBox="0 0 156 96" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M132 16H24C21.2386 16 19 18.2386 19 21V75C19 77.7614 21.2386 80 24 80H132C134.761 80 137 77.7614 137 75V21C137 18.2386 134.761 16 132 16Z" stroke="var(--theme--primary, var(--primary))" stroke-width="2"/>
     <path d="M32 23H28C26.8954 23 26 23.8954 26 25V29C26 30.1046 26.8954 31 28 31H32C33.1046 31 34 30.1046 34 29V25C34 23.8954 33.1046 23 32 23Z" fill="var(--theme--primary, var(--primary))"/>
     <path d="M44 23H40C38.8954 23 38 23.8954 38 25V29C38 30.1046 38.8954 31 40 31H44C45.1046 31 46 30.1046 46 29V25C46 23.8954 45.1046 23 44 23Z" fill="var(--theme--primary, var(--primary))" fill-opacity="0.25"/>
