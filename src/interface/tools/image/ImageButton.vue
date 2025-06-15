@@ -129,7 +129,6 @@
 
 <script setup lang="ts">
   import { useApi } from '@directus/extensions-sdk';
-  import { type Editor } from '@tiptap/vue-3';
   import { computed, inject, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import type { CustomToolButtonProps } from '../../types';

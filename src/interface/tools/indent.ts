@@ -115,17 +115,7 @@ const IndentExtension = Extension.create({
     const applyIndent =
       (direction: number) =>
       () =>
-      ({
-        tr,
-        state,
-        dispatch,
-        editor,
-      }: {
-        tr: Transaction;
-        state: EditorState;
-        dispatch?: Dispatch;
-        editor: Editor;
-      }) => {
+      ({ tr, state, dispatch }: { tr: Transaction; state: EditorState; dispatch?: Dispatch; editor: Editor }) => {
         const { selection } = state;
         tr.setSelection(selection);
         tr = updateIndentLevel(tr, direction);
