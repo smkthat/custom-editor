@@ -16,7 +16,7 @@ PKG_NAME := $(shell cat package.json | jq -r .name)
 PKG_VERSION := $(shell cat package.json | jq -r .version)
 PKG_MANAGER = bun
 
-.PHONY: help install dev build link format lint clean
+.PHONY: help install dev build link format lint clean watch
 
 .DEFAULT_GOAL := help
 
@@ -52,6 +52,9 @@ dev: ## 🚀 Start development server with watch mode
 	@echo "${BLUE}---> 🚀 Starting development server...${RESET}"
 	@bun run dev
 
+watch: ## 👁️ Watch for file changes and rebuild
+	@echo "${BLUE}---> 👁️ Watching for file changes...${RESET}"
+	@bunx onchange 'src/**/*' -- make build
 
 build: ## 🏗️ Build the extension for production
 	@echo "${BLUE}---> 🏗️ Building extension...${RESET}"
