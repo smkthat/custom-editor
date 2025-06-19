@@ -284,6 +284,10 @@
     background-color: transparent;
   }
 
+  .flexible-editor :deep(.ProseMirror) {
+    white-space: pre-wrap;
+  }
+
   /* Focus styles */
   .flexible-editor :deep(.has-focus) {
     border-radius: 4px;
