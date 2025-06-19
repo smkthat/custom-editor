@@ -147,10 +147,10 @@
     const bodyMatch = processedHtml.match(/<body[^>]*>(.*?)<\/body>/s);
     const finalHtml = bodyMatch ? bodyMatch[1] : processedHtml;
 
-    console.log('🖼️ Processed HTML:', finalHtml.substring(0, 500) + '...');
-    console.log(`🖼️ Final image count: ${(finalHtml.match(/<img/g) || []).length}`);
+    console.log('🖼️ Processed HTML:', finalHtml!.substring(0, 500) + '...');
+    console.log(`🖼️ Final image count: ${(finalHtml!.match(/<img/g) || []).length}`);
 
-    return finalHtml;
+    return finalHtml!;
   };
 
   const handleFileSelect = async (event: Event) => {
@@ -164,6 +164,7 @@
       const arrayBuffer = await file.arrayBuffer();
       const result = await window.mammoth.convertToHtml(
         { arrayBuffer },
+        // Set your custom style map in src/interface/data/docx-style-map.json
         { styleMap: JSON.parse(JSON.stringify(CustomDocxStyleMap)) }
       );
       let html = result.value;
