@@ -14,6 +14,7 @@ const undo = defineTool({
   disabled: (editor: Editor) => !editor.can().chain().focus().undo().run(),
   active: () => false,
 });
+
 const redo = defineTool({
   key: 'redo',
   name: customMessages.tools.redo,

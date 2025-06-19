@@ -284,10 +284,6 @@
     background-color: transparent;
   }
 
-  .flexible-editor :deep(.ProseMirror) {
-    white-space: pre-wrap;
-  }
-
   /* Focus styles */
   .flexible-editor :deep(.has-focus) {
     border-radius: 4px;
@@ -329,6 +325,7 @@
     line-height: var(--editor-lineheight);
     padding: var(--theme--form--field--input--padding, var(--input-padding));
     overflow: auto;
+    white-space: pre-wrap;
   }
 
   .flexible-editor.height-fixed :deep(.ProseMirror) {

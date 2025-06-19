@@ -35,6 +35,7 @@ import underline from './underline';
 const tools: Tool[] = [
   relationBlock,
   relationInlineBlock,
+  relationMark,
   paragraph,
   codeBlock,
   heading(1),
@@ -53,7 +54,6 @@ const tools: Tool[] = [
   link.add,
   link.remove,
   link.auto,
-  relationMark,
   hardBreak,
   horizontalRule,
   textAlign,

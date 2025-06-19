@@ -79,7 +79,7 @@
     props.editor.state.selection.$anchor.marks().find((mark) => mark.type.name === 'relation-mark')
   );
 
-  function create(collection) {
+  function create(collection: string) {
     createItem(collection, 'relationMark');
   }
 

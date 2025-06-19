@@ -1,4 +1,4 @@
-import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
+import { TableKit } from '@tiptap/extension-table';
 import type { Editor } from '@tiptap/core';
 
 import customMessages from '../../i18n/custom-messages';
@@ -9,7 +9,7 @@ export default defineTool({
   key: 'table',
   name: customMessages.tools.table,
   icon: 'table',
-  extension: [Table, TableHeader, TableRow, TableCell],
+  extension: [TableKit],
   toolbarButton: ToolButton,
   action: (editor: Editor) => editor.chain().focus().insertTable().run(),
   disabled: (editor: Editor) => !editor.can().chain().focus().insertTable().run(),

@@ -1,43 +1,3 @@
-<script setup lang="ts">
-  // nodeViewProps: https://github.com/ueberdosis/tiptap/blob/develop/docs/guide/node-views/vue.md#all-available-props
-  import { NodeViewWrapper } from '@tiptap/vue-3';
-  import { computed, inject } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import type { RelationReference } from '../../types';
-  import type { NodeViewProps } from '@tiptap/vue-3';
-
-  import DuplicationWarning from '../../components/DuplicationWarning.vue';
-  import { useI18nFallback } from '../../composables/use-i18n-fallback';
-
-  const props = defineProps<NodeViewProps & { inline?: boolean }>();
-
-  const { t } = useI18nFallback(useI18n());
-
-  const {
-    loading,
-    templates,
-    relationInfo,
-    findDisplayItem,
-    editItem,
-    hasAllowedCollection,
-    getCollectionName,
-  }: RelationReference = inject('m2aRelation')!;
-
-  const element = computed(() => findDisplayItem(props.node.attrs.id));
-
-  // Prevent the gapcursor from appearing while clicking the relation block
-  const onMousedown = () => {
-    if (!props.editor.isFocused) props.editor.commands.blur();
-  };
-
-  const deleteNode = () => {
-    const pos = props.getPos?.();
-    if (pos !== undefined) {
-      props.editor.chain().focus().setNodeSelection(pos).deleteSelection().run();
-    }
-  };
-</script>
-
 <template>
   <node-view-wrapper :class="inline ? 'relation-inline-block' : 'relation-block'">
     <v-skeleton-loader v-if="loading" :type="inline ? 'text' : 'block-list-item'" />
@@ -84,6 +44,46 @@
     </template>
   </node-view-wrapper>
 </template>
+
+<script setup lang="ts">
+  // nodeViewProps: https://github.com/ueberdosis/tiptap/blob/develop/docs/guide/node-views/vue.md#all-available-props
+  import { NodeViewWrapper } from '@tiptap/vue-3';
+  import { computed, inject } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import type { RelationReference } from '../../types';
+  import type { NodeViewProps } from '@tiptap/vue-3';
+
+  import DuplicationWarning from '../../components/DuplicationWarning.vue';
+  import { useI18nFallback } from '../../composables/use-i18n-fallback';
+
+  const props = defineProps<NodeViewProps & { inline?: boolean }>();
+
+  const { t } = useI18nFallback(useI18n());
+
+  const {
+    loading,
+    templates,
+    relationInfo,
+    findDisplayItem,
+    editItem,
+    hasAllowedCollection,
+    getCollectionName,
+  }: RelationReference = inject('m2aRelation')!;
+
+  const element = computed(() => findDisplayItem(props.node.attrs.id));
+
+  // Prevent the gapcursor from appearing while clicking the relation block
+  const onMousedown = () => {
+    if (!props.editor.isFocused) props.editor.commands.blur();
+  };
+
+  const deleteNode = () => {
+    const pos = props.getPos?.();
+    if (pos !== undefined) {
+      props.editor.chain().focus().setNodeSelection(pos).deleteSelection().run();
+    }
+  };
+</script>
 
 <style scoped>
   /* Based on the styles of https://github.com/directus/directus/blob/main/app/src/components/v-list-item.vue */

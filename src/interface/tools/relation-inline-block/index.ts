@@ -7,7 +7,7 @@ export default defineTool({
   // Custom
   key: 'relation-inline-block',
   // name won’t be used
-  name: 'relation-inline-block',
+  name: 'relation_inline_block',
   excludeFromOptions: true,
   // Already imported
   extension: [],

@@ -104,7 +104,7 @@
     let newTab: boolean | null = null;
 
     if (old.hasOwnProperty('target')) {
-      newTab = old.target === null ? false : true;
+      newTab = old.target !== null;
     }
 
     linkTypes.forEach((linkType) => {

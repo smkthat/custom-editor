@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
+import { Component } from 'vue';
 import type { RelationNodeAttrs } from '../../types';
 
 import NodeView from './NodeView.vue';
@@ -46,7 +47,7 @@ export default Node.create({
   },
 
   addNodeView() {
-    return VueNodeViewRenderer(NodeView);
+    return VueNodeViewRenderer(NodeView as Component);
   },
 
   addCommands() {
