@@ -58,7 +58,7 @@ export default Node.create({
           }
         ) =>
         ({ commands }) => {
-          return commands.insertContent({ type: tag, attrs });
+          return commands.insertContent({ type: this.name, attrs });
         },
     };
   },

@@ -140,7 +140,7 @@ export function useRelationReference({
   // [!MODIFIED!] `selectingFrom` not needed
   // const selectingFrom = ref<string | null>(null);
   const editsAtStart = ref<Record<string, any>>({});
-  let newItem = false;
+  const newItem = ref(false);
 
   /* TODO: [test] We do not need this, because the permission applies for the entire editor
     const { createAllowed, deleteAllowed, selectAllowed, updateAllowed } = useRelationPermissionsM2A(relationInfo);
@@ -210,9 +210,9 @@ export function useRelationReference({
         }
       }
     });
-    newItem = true;
+    newItem.value = true;
     const item = selected[0]!;
-    const type = 'relationBlock';
+    // const type = 'relationBlock';
     if (!relationInfo.value) return;
     const relationPkField =
       relationInfo.value.relationPrimaryKeyFields[item[relationInfo.value.collectionField.field]]?.field;
@@ -241,7 +241,7 @@ export function useRelationReference({
 
     // Add to M2A Store
     const cleanedItem = cloneDeep(cleanItem(item));
-    m2aStore.create(cleanedItem, junctionPrimaryKeyField, editorField.value);
+    m2aStore.create(cleanedItem, nodeId, editorField.value);
   }
 
   // [DIRECTUS_CORE][!MODIFIED!] from m2a-field
@@ -258,6 +258,7 @@ export function useRelationReference({
 
     // [!MODIFIED!] assign `type` and add `type` to function parameters
     editModalActive.value[type] = true;
+    newItem.value = true;
   }
 
   // [DIRECTUS_CORE][!MODIFIED!][!MODIFIED!] from m2a-field
@@ -270,7 +271,7 @@ export function useRelationReference({
     const junctionField = relationInfo.value.junctionField.field;
     const junctionPkField = relationInfo.value.junctionPrimaryKeyField.field;
 
-    newItem = false;
+    newItem.value = false;
 
     editsAtStart.value = {
       ...getItemEdits(item),
@@ -298,22 +299,24 @@ export function useRelationReference({
   function stageEdits(item: Record<string, any>, insertNode: (attrs: RelationNodeAttrs) => void) {
     if (isEmpty(item)) return;
 
-    if (newItem) {
+    if (newItem.value) {
       const nodeId = uuidv4();
 
+      // Insert node into editor
       insertNode({
         id: nodeId,
         junction: junctionCollection,
         collection: item.collection,
       });
 
-      // Create M2A relation
+      // Add to M2A relation
+      const junctionPrimaryKeyField = relationInfo.value!.junctionPrimaryKeyField.field;
       item[junctionPrimaryKeyField] = nodeId;
       create(item);
 
       // Add to M2A Store
       const cleanedItem = cloneDeep(cleanItem(item));
-      m2aStore.create(cleanedItem, junctionPrimaryKeyField, editorField.value);
+      m2aStore.create(cleanedItem, nodeId, editorField.value);
     } else {
       // Update M2A relation
       update(item);
