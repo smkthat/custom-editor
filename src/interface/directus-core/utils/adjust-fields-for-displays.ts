@@ -1,24 +1,17 @@
 // Based on https://github.com/directus/directus/blob/main/app/src/utils/adjust-fields-for-displays.ts
 
-// [START] different from original
-// import { useExtension } from "@/composables/use-extension";
 import { useStores } from '@directus/extensions-sdk';
-// [END] different from original
 import { computed } from 'vue';
-// import { useFieldsStore } from "@/stores/fields";
-// import { Field } from '@directus/shared/types';
 import type { Field } from '@directus/types';
 
 import { useExtension } from '../composables/use-extension';
 
 export function adjustFieldsForDisplays(fields: readonly string[], parentCollection: string): string[] {
-  // [START] different from original
   const { useFieldsStore } = useStores();
-  // [END] different from original
 
   const fieldsStore = useFieldsStore();
 
-  const adjustedFields: string[] = fields
+  return fields
     .map((fieldKey) => {
       const field: Field | null = fieldsStore.getField(parentCollection, fieldKey);
 
@@ -70,6 +63,4 @@ export function adjustFieldsForDisplays(fields: readonly string[], parentCollect
       return fieldKey;
     })
     .flat();
-
-  return adjustedFields;
 }

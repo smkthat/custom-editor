@@ -45,7 +45,7 @@
           <v-list-item-content>
             <v-text-overflow :text="tool.name" />
           </v-list-item-content>
-          <v-list-item-hint>{{ translateShortcut(tool.shortcut) }}</v-list-item-hint>
+          <v-list-item-hint v-if="tool.shortcut">{{ translateShortcut(tool.shortcut) }}</v-list-item-hint>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -85,6 +85,7 @@
     singleLineMode: boolean;
     mode: ToolbarMode;
   }
+
   const props = withDefaults(defineProps<Props>(), {
     displayFormat: false,
   });

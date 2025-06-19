@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: [duplication warning] solve duplication -->
   <v-icon
     v-if="duplicationWarning"
     name="warning"
@@ -11,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-  // TODO: [duplication warning] solve duplication
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
   import type { M2AStoreItem } from '../composables/use-m2a-store';
@@ -31,7 +29,7 @@
   const duplicationWarning = computed(() => {
     const itemInStore = (item: M2AStoreItem) => item.nodeId === props.nodeId;
     const storeItem = m2aStore.state.value.find(itemInStore);
-    return storeItem?.duplicationWarning ? true : false;
+    return !!storeItem?.duplicationWarning;
   });
 </script>
 

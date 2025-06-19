@@ -395,7 +395,13 @@ export function useRelationReference({
   }
 
   // TODO: [Stage 2][flow chart] Place link to flow chart here
-  function mergeItemWithEdits(itemFields: any, mergeFields: any, warning: { duplication: boolean }) {
+  function mergeItemWithEdits(
+    itemFields: any,
+    mergeFields: any,
+    warning: {
+      duplication: boolean;
+    }
+  ) {
     for (let fieldKey in itemFields) {
       const field = itemFields[fieldKey];
       const mergeField = mergeFields?.[fieldKey];
@@ -423,12 +429,16 @@ export function useRelationReference({
         }
 
         if (editsInclude('update')) {
-          /* TODO: [Stage 2][duplication] This does not work for deep nested items, because in fetched data there is no ID for nested relations. Only duplicationFields are available, as well as other fields (have a look at `fields.value` above) 
+          /* TODO: [Stage 2][duplication] This does not work for deep nested items,
+              because in fetched data there is no ID for nested relations.
+              Only duplicationFields are available, as well as other fields
+              (have a look at `fields.value` above).
 
-                    So one approach could be to add id fields to the `fields.value` via the duplication_fields array. But what if it is not called id? There is a method `getRelationsForField` in the `relationStore` …
-
-                    Another approach would be to use the api while copying
-                    */
+             So one approach could be to add id fields to the `fields.value`
+             via the duplication_fields array. But what if it is not called id?
+             There is a method `getRelationsForField` in the `relationStore` …
+             Another approach would be to use the api while copying
+           */
 
           // TODO: [duplication warning] solve duplication
           let countFieldsToMerge = 0;

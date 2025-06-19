@@ -2,8 +2,22 @@
 
 import { capitalize } from 'lodash';
 
+interface NavigatorUAData {
+  platform: string;
+  // Add other properties if needed
+}
+
+declare global {
+  interface Navigator {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData
+    userAgentData?: NavigatorUAData;
+  }
+}
+
 export function translateShortcut(keys: string[]): string {
-  const isMac = navigator.platform.toLowerCase().startsWith('mac') || navigator.platform.startsWith('iP');
+  const isMac = navigator.userAgentData?.platform
+    ? navigator.userAgentData.platform.toLowerCase().includes('mac')
+    : /mac/i.test(navigator.userAgent);
 
   if (isMac) {
     return keys

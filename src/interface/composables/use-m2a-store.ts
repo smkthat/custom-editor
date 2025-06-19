@@ -150,7 +150,7 @@ export const useM2aStore = () => ({
   },
 
   itemExists(nodeId: UUID) {
-    return this.getItem(nodeId) ? true : false;
+    return !!this.getItem(nodeId);
   },
 
   itemIsActive(nodeId: UUID) {

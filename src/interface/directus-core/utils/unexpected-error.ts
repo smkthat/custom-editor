@@ -1,26 +1,16 @@
 // Based on https://github.com/directus/directus/blob/main/app/src/utils/unexpected-error.ts
 
-// [START] different from original
-// import { RequestError } from "@/api";
-
-// import { useNotificationsStore } from "@/stores/notifications";
 import { useStores } from '@directus/extensions-sdk';
-// import { i18n } from "@/lang";
 import { useI18n } from 'vue-i18n';
-// import { APIError } from "@/types/error";
 import type { APIError } from '../types/error';
 
 import { RequestError } from '../types/api';
 
-// [END] different from original
-
 let store: any;
 
 export function unexpectedError(error: Error | RequestError | APIError): void {
-  // [START] different from original
   const i18n = { global: useI18n() };
   const { useNotificationsStore } = useStores();
-  // [END] different from original
 
   if (!store) store = useNotificationsStore();
 

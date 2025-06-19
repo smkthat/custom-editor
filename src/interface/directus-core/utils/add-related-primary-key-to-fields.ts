@@ -1,10 +1,6 @@
 // Based on https://github.com/directus/directus/blob/main/app/src/utils/add-related-primary-key-to-fields.ts
 
-// [START] different from original
-// import { useFieldsStore } from '@/stores/fields';
 import { useStores } from '@directus/extensions-sdk';
-
-// [END] different from original
 
 /**
  * Adds the primary key field for any passed relational dot-notation field to the array of fields.
@@ -24,9 +20,7 @@ import { useStores } from '@directus/extensions-sdk';
 export function addRelatedPrimaryKeyToFields(currentCollection: string, fields: string[]): string[] {
   if (!fields?.length) return [];
 
-  // [START] different from original
   const { useFieldsStore } = useStores();
-  // [END] different from original
 
   const fieldsStore = useFieldsStore();
 

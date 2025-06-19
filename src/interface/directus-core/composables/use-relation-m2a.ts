@@ -1,17 +1,10 @@
 // Based on https://github.com/directus/directus/blob/main/app/src/composables/use-relation-m2a.ts
 
-// [START] different from original
-// import { useCollectionsStore } from '@/stores/collections';
-// import { useFieldsStore } from '@/stores/fields';
-// import { useRelationsStore } from '@/stores/relations';
 import { useStores } from '@directus/extensions-sdk';
 import { computed, Ref } from 'vue';
 import type { Field, Relation } from '@directus/types';
 
-// import { Collection } from "@/types/collections";
 import { Collection } from '../types/collections';
-
-// [END] different from original
 
 export type RelationM2A = {
   allowedCollections: Collection[];
@@ -44,9 +37,7 @@ One1              Many|Any: junctionCollection          ┌─One2
  */
 
 export function useRelationM2A(collection: Ref<string>, field: Ref<string>) {
-  // [START] different from original
   const { useCollectionsStore, useFieldsStore, useRelationsStore } = useStores();
-  // [END] different from original
 
   const relationsStore = useRelationsStore();
   const collectionsStore = useCollectionsStore();
@@ -56,7 +47,7 @@ export function useRelationM2A(collection: Ref<string>, field: Ref<string>) {
     const relations = relationsStore.getRelationsForField(collection.value, field.value);
 
     const junction = relations.find(
-      (relation) =>
+      (relation: Relation) =>
         relation.related_collection === collection.value &&
         relation.meta?.one_field === field.value &&
         relation.meta.junction_field
@@ -65,25 +56,26 @@ export function useRelationM2A(collection: Ref<string>, field: Ref<string>) {
     if (!junction) return undefined;
 
     const relation = relations.find(
-      (relation) => relation.collection === junction.collection && relation.field === junction.meta?.junction_field
+      (relation: Relation) =>
+        relation.collection === junction.collection && relation.field === junction.meta?.junction_field
     );
 
     if (!relation) return undefined;
 
-    const allowedCollections = (relation.meta?.one_allowed_collections ?? []).reduce((acc, collection) => {
-      const collectionInfo = collectionsStore.getCollection(collection);
-      if (collectionInfo) acc.push(collectionInfo);
-      return acc;
-    }, [] as Collection[]);
-
-    const relationPrimaryKeyFields = allowedCollections.reduce(
-      (acc, collection) => {
-        const pkField = fieldsStore.getPrimaryKeyFieldForCollection(collection?.collection);
-        if (pkField) acc[collection.collection] = pkField;
+    const allowedCollections = (relation.meta?.one_allowed_collections ?? []).reduce(
+      (acc: Collection[], collection: Collection) => {
+        const collectionInfo = collectionsStore.getCollection(collection);
+        if (collectionInfo) acc.push(collectionInfo);
         return acc;
       },
-      {} as Record<string, Field>
+      [] as Collection[]
     );
+
+    const relationPrimaryKeyFields = allowedCollections.reduce((acc: Record<string, Field>, collection: Collection) => {
+      const pkField = fieldsStore.getPrimaryKeyFieldForCollection(collection?.collection);
+      if (pkField) acc[collection.collection] = pkField;
+      return acc;
+    }, {});
 
     return {
       allowedCollections,
