@@ -1,59 +1,54 @@
 <template>
-    <v-button
-        @click="action"
-        tabindex="-1"
-        v-tooltip:[tooltipPlacement]="tooltip"
-        :aria-label="title"
-        :disabled="disabled"
-        :aria-disabled="disabled"
-        :aria-pressed="active"
-        :class="{ 'is-active': active }"
-        :icon="small"
-        :small="small"
-        :x-small="!small"
-    >
-        <template v-if="icon === false">{{ display ? display : title }}</template>
-        <v-icon
-            v-if="icon !== false"
-            :name="icon"
-        />
-    </v-button>
+  <v-button
+    @click="action"
+    tabindex="-1"
+    v-tooltip:[tooltipPlacement]="tooltip"
+    :aria-label="title"
+    :disabled="disabled"
+    :aria-disabled="disabled"
+    :aria-pressed="active"
+    :class="{ 'is-active': active }"
+    :icon="small"
+    :small="small"
+    :x-small="!small"
+  >
+    <template v-if="icon === false">{{ display ? display : title }}</template>
+    <v-icon v-if="icon !== false" :name="icon" />
+  </v-button>
 </template>
 
-
-
 <script setup lang="ts">
-    // TODO: [Stage 2][improve] attribute bindings on <v-button> not on <button> but on parent element
-    import { computed, inject, type Ref } from 'vue';
-    import { translateShortcut } from '../directus-core/utils/translate-shortcut';
-    import type { ToolButtonProps } from '../types';
+  import { computed, inject } from 'vue';
+  import type { ToolButtonProps } from '../types';
+  import type { Ref } from 'vue';
 
-    const props = withDefaults(defineProps<ToolButtonProps>(), {
-        icon: false,
-        display: false,
-        shortcut: () => [],
-        active: false,
-        disabled: false,
-    });
+  import { translateShortcut } from '../directus-core/utils/translate-shortcut';
 
-    const tooltip = computed(() => {
-        if (!props.shortcut.length)
-            return props.title;
+  // TODO: [Stage 2][improve] attribute bindings on <v-button> not on <button> but on parent element
 
-        return `${props.title} (${translateShortcut(props.shortcut)})`;
-    });
+  const props = withDefaults(defineProps<ToolButtonProps>(), {
+    icon: false,
+    display: false,
+    shortcut: () => [],
+    active: false,
+    disabled: false,
+  });
 
-    const small = computed(() => props.icon || props.display);
+  const tooltip = computed(() => {
+    if (!props.shortcut.length) return props.title;
 
-    const fullscreen = inject('fullscreen') as Ref;
-    const tooltipPlacement = computed(() => fullscreen.value ? 'bottom' : 'top');
+    return `${props.title} (${translateShortcut(props.shortcut)})`;
+  });
+
+  const small = computed(() => props.icon || props.display);
+
+  const fullscreen = inject('fullscreen') as Ref;
+  const tooltipPlacement = computed(() => (fullscreen.value ? 'bottom' : 'top'));
 </script>
 
-
-
 <style scoped>
-    .is-active :deep(.button:not(:disabled)) {
-        color: var(--v-button-color-active);
-        background-color: var(--v-button-background-color-active);
-    }
+  .is-active :deep(.button:not(:disabled)) {
+    color: var(--v-button-color-active);
+    background-color: var(--v-button-background-color-active);
+  }
 </style>

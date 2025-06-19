@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "stylelint-config-recommended",
+    "stylelint-config-recommended-vue",
+    "stylelint-prettier/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": true,
+    "selector-class-pattern": null,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "deep",
+          "slotted"
+        ]
+      }
+    ],
+    "custom-property-pattern": null
+  }
+}
