@@ -1,1 +1,2 @@
-bun run format
+prettier --write --ignore-unknown $(git --no-pager diff --name-only --relative --diff-filter=ACMR | sed 's| |\\ |g')
+git update-index --again
