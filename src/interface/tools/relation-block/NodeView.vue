@@ -80,11 +80,7 @@
   const deleteNode = () => {
     const pos = props.getPos?.();
     if (pos !== undefined) {
-      props.editor
-        .chain()
-        .focus()
-        .deleteRange({ from: pos, to: pos + props.node.nodeSize })
-        .run();
+      props.editor.chain().focus().setNodeSelection(pos).deleteSelection().run();
     }
   };
 </script>
