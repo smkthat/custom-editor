@@ -19,9 +19,7 @@
         @blur="handleCaptionBlur"
         ref="captionRef"
         :placeholder="'Enter caption...'"
-      >
-        {{ caption }}
-      </figcaption>
+      />
       <div
         v-if="!showCaption && selected"
         class="add-caption-placeholder"
@@ -36,7 +34,7 @@
 
 <script setup lang="ts">
   import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
-  import { computed, nextTick, ref } from 'vue';
+  import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
   const props = defineProps(nodeViewProps);
 
@@ -174,6 +172,21 @@
       selection?.addRange(range);
     }
   };
+
+  watch(caption, (newValue) => {
+    if (captionRef.value) {
+      // Обновляем только если текущее содержимое отличается
+      if (captionRef.value.textContent !== newValue) {
+        captionRef.value.textContent = newValue;
+      }
+    }
+  });
+
+  onMounted(() => {
+    if (captionRef.value && caption.value) {
+      captionRef.value.textContent = caption.value;
+    }
+  });
 </script>
 
 <style scoped>

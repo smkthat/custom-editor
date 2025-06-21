@@ -30,6 +30,7 @@
       <template v-if="isImageSelected">
         <v-divider />
 
+        <!-- Size Options -->
         <v-list-group>
           <template #activator>
             <v-text-overflow :text="t('image.size')" />
@@ -62,9 +63,46 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-item clickable @click="removeImage">
+        <!-- Alignment Options -->
+        <v-list-group>
+          <template #activator>
+            <v-text-overflow :text="t('image.alignment')" />
+          </template>
+          <v-list-item clickable @click="updateImageAlignment('left')" :active="currentAlignment === 'left'">
+            <v-list-item-content>
+              <v-text-overflow text="Left" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item clickable @click="updateImageAlignment('center')" :active="currentAlignment === 'center'">
+            <v-list-item-content>
+              <v-text-overflow text="Center" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item clickable @click="updateImageAlignment('right')" :active="currentAlignment === 'right'">
+            <v-list-item-content>
+              <v-text-overflow text="Right" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <v-divider />
+
+        <!-- Remove Buttons -->
+        <v-list-item :disabled="currentCaption === ''" clickable @click="removeImageCaption('')">
+          <v-list-item-icon>
+            <v-icon name="format_clear" />
+          </v-list-item-icon>
           <v-list-item-content>
-            <v-text-overflow :text="t('image.remove')" />
+            <v-text-overflow :text="t('image.caption_remove')" />
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item clickable @click="removeImage">
+          <v-list-item-icon>
+            <v-icon name="delete" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-text-overflow :text="t('image.remove')" class="text-danger" />
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -119,6 +157,10 @@
 
   const uploadDrawerOpened = ref(false);
   const uploaderComponentElement = ref<HTMLElement>();
+  const currentSize = ref('medium');
+  const currentAlignment = ref('left');
+  const currentCaption = ref('');
+  const currentAlt = ref('');
 
   const { useCollectionsStore } = useStores();
   const collectionStore = useCollectionsStore();
@@ -143,7 +185,6 @@
     uploadDrawerOpened.value = false;
   };
 
-  const currentSize = ref('medium');
   const small = computed(() => props.icon || props.display);
   const fullscreen = inject('fullscreen') as Ref;
   const tooltipPlacement = computed(() => (fullscreen.value ? 'bottom' : 'top'));
@@ -167,7 +208,9 @@
       if (isImageSelected.value) {
         const attrs = props.editor.getAttributes('customImage');
         currentSize.value = attrs.size || 'medium';
-        console.log('Current image attributes:', attrs);
+        currentAlignment.value = attrs.alignment || 'left';
+        currentCaption.value = attrs.caption || '';
+        currentAlt.value = attrs.alt || '';
       }
     },
     { deep: true }
@@ -175,14 +218,28 @@
 
   const updateImageSize = (size: string) => {
     currentSize.value = size;
+    updateImageAttributes({ size });
+  };
 
-    props.editor
-      .chain()
-      .focus()
-      .updateAttributes('customImage', {
-        size: size,
-      })
-      .run();
+  const updateImageAlignment = (alignment: string) => {
+    currentAlignment.value = alignment;
+    updateImageAttributes({ alignment });
+  };
+
+  const removeImageCaption = (caption: string) => {
+    currentCaption.value = caption;
+    updateImageAttributes({ caption });
+  };
+
+  const updateImageAlt = (alt: string) => {
+    currentAlt.value = alt;
+    updateImageAttributes({ alt });
+  };
+
+  const updateImageAttributes = (attrs: Record<string, any>) => {
+    if (!props.editor) return;
+
+    props.editor.chain().focus().updateAttributes('customImage', attrs).run();
   };
 
   const removeImage = () => {
