@@ -249,18 +249,18 @@
     opacity: 1;
   }
 
-  /* Node selection styles */
-  .ProseMirror-selectednode .custom-image-figure {
-    outline: 2px solid var(--theme--primary);
-    outline-offset: 2px;
-    border-radius: var(--theme--border-radius);
-  }
-
   /* Ensure the figure inherits the editor's full width */
   .ProseMirror .custom-image-figure {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box;
+  }
+
+  /* Node selection styles */
+  .ProseMirror-selectednode:not(.has-focus) .custom-image-figure {
+    outline: 2px solid var(--theme--primary);
+    outline-offset: 2px;
+    border-radius: var(--theme--border-radius);
   }
 
   /* Size classes for debugging */

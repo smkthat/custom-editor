@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
   import { BubbleMenu } from '@tiptap/extension-bubble-menu';
-  import { computed, ref, watch } from 'vue';
+  import { ref, watch } from 'vue';
   import type { Editor } from '@tiptap/vue-3';
 
   const props = defineProps<{
