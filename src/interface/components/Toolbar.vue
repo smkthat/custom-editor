@@ -62,6 +62,7 @@
       :active="editor.isFocused && tool.active?.(editor)"
       :disabled="tool.disabled?.(editor) || (singleLineMode && tool.disabledInSingleLineMode)"
       :editor="editor"
+      :folder="folder"
     />
   </component>
 </template>
@@ -84,6 +85,7 @@
     displayFormat: boolean;
     singleLineMode: boolean;
     mode: ToolbarMode;
+    folder?: string;
   }
 
   const props = withDefaults(defineProps<Props>(), {

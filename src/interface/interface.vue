@@ -16,6 +16,7 @@
       :display-format="displayFormat"
       :single-line-mode="singleLineMode"
       :mode="toolbarMode"
+      :folder="folder"
     />
     <editor-content
       :editor="editor"
@@ -40,7 +41,6 @@
   import { EditorContent, useEditor } from '@tiptap/vue-3';
   import { v4 as uuidv4 } from 'uuid';
   import { computed, onMounted, provide, ref, toRef, watch } from 'vue';
-  // import { useM2aStore } from './composables/use-m2a-store'
   import { useI18n } from 'vue-i18n';
   import type { Collection } from './directus-core/types/collections';
   import type { RelationReferenceAttributes, ToolbarMode } from './types';
@@ -74,6 +74,7 @@
     field: string | null;
     collection: string | null;
     primaryKey: string | number | null;
+    folder?: string;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -171,7 +172,11 @@
       editorField: uniqueEditorField,
       itemCollection: toRef(props, 'collection'),
       itemPrimaryKey: toRef(props, 'primaryKey'),
-      updateM2aField: (value) => emit('setFieldValue', { field: props.m2aField, value }),
+      updateM2aField: (value) =>
+        emit('setFieldValue', {
+          field: props.m2aField,
+          value,
+        }),
       relationBlocks: toRef(props, 'relationBlocks'),
       relationInlineBlocks: toRef(props, 'relationInlineBlocks'),
       relationMarks: toRef(props, 'relationMarks'),

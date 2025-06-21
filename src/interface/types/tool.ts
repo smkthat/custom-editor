@@ -32,7 +32,7 @@ export type ToolButtonProps = {
   disabled: boolean;
 };
 
-export type CustomToolButtonProps = ToolButtonProps & { editor: Editor };
+export type CustomToolButtonProps = ToolButtonProps & { editor: Editor; folder?: string };
 
 export type InterfaceOption = { text: string; value: string };
 
