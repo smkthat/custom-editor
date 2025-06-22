@@ -31,6 +31,7 @@ export default {
     relation_block: 'Blocks',
     paragraph: 'Paragraph',
     code_block: 'Code Block',
+    details: 'Details',
     h1: '$t:wysiwyg_options.h1',
     h2: '$t:wysiwyg_options.h2',
     h3: '$t:wysiwyg_options.h3',

@@ -8,6 +8,7 @@ import bold from './bold';
 import bulletList from './bullet-list';
 import code from './code';
 import codeBlock from './code-block';
+import details from './details';
 import docxImport from './docx-import';
 import fullscreen from './fullscreen';
 import hardBreak from './hard-break';
@@ -69,6 +70,7 @@ const tools: Tool[] = [
   image,
   indent,
   outdent,
+  details,
 ];
 
 export const selectedTools = (selection: ToolSelection, includeRelationNodes = false) =>
