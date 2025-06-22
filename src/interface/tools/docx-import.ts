@@ -1,5 +1,3 @@
-import type { Editor } from '@tiptap/core';
-
 import DocxImportButton from '../components/DocxImportButton.vue';
 import customMessages from '../i18n/custom-messages';
 import { defineTool } from '../lib';
@@ -11,9 +9,9 @@ export default defineTool({
   extension: [], // No TipTap extension needed, just functionality
   excludeFromOptions: false,
   toolbarButton: DocxImportButton,
-  action: (editor: Editor) => {
+  action: () => {
     // Action will be handled by the custom toolbar button component
   },
-  disabled: (editor: Editor) => false,
-  active: (editor: Editor) => false,
+  disabled: () => false,
+  active: () => false,
 });
