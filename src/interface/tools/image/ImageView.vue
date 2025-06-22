@@ -20,21 +20,13 @@
         ref="captionRef"
         :placeholder="'Enter caption...'"
       />
-      <div
-        v-if="!showCaption && selected"
-        class="add-caption-placeholder"
-        :style="getCaptionStyle()"
-        @click="addCaption"
-      >
-        Click to add caption
-      </div>
     </figure>
   </NodeViewWrapper>
 </template>
 
 <script setup lang="ts">
   import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
-  import { computed, nextTick, onMounted, ref, watch } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
 
   const props = defineProps(nodeViewProps);
 
@@ -159,23 +151,9 @@
     props.updateAttributes({ caption: newCaption });
   };
 
-  const addCaption = async () => {
-    props.updateAttributes({ caption: 'Enter caption here' });
-    await nextTick();
-    if (captionRef.value) {
-      captionRef.value.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(captionRef.value);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-    }
-  };
-
   watch(caption, (newValue) => {
+    // Update caption when it changes
     if (captionRef.value) {
-      // Обновляем только если текущее содержимое отличается
       if (captionRef.value.textContent !== newValue) {
         captionRef.value.textContent = newValue;
       }
