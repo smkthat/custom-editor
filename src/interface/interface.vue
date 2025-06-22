@@ -16,7 +16,11 @@
       :display-format="displayFormat"
       :single-line-mode="singleLineMode"
       :mode="toolbarMode"
+      :folder="folder"
     />
+    <drag-handle :editor="editor">
+      <div class="custom-drag-handle" />
+    </drag-handle>
     <editor-content
       :editor="editor"
       :spellcheck="spellcheck ? 'true' : 'false'"
@@ -33,6 +37,8 @@
 <script setup lang="ts">
   // Imports
   import Document from '@tiptap/extension-document';
+  import { DragHandle } from '@tiptap/extension-drag-handle-vue-3';
+  import NodeRange from '@tiptap/extension-node-range';
   import Paragraph from '@tiptap/extension-paragraph';
   import Text from '@tiptap/extension-text';
   import Typography from '@tiptap/extension-typography';
@@ -40,7 +46,6 @@
   import { EditorContent, useEditor } from '@tiptap/vue-3';
   import { v4 as uuidv4 } from 'uuid';
   import { computed, onMounted, provide, ref, toRef, watch } from 'vue';
-  // import { useM2aStore } from './composables/use-m2a-store'
   import { useI18n } from 'vue-i18n';
   import type { Collection } from './directus-core/types/collections';
   import type { RelationReferenceAttributes, ToolbarMode } from './types';
@@ -74,6 +79,7 @@
     field: string | null;
     collection: string | null;
     primaryKey: string | number | null;
+    folder?: string;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -117,6 +123,7 @@
         className: 'has-focus',
         mode: 'shallowest',
       }),
+      NodeRange.configure({ key: null }),
       RelationBlock,
       RelationInlineBlock,
       RelationMark,
@@ -171,7 +178,11 @@
       editorField: uniqueEditorField,
       itemCollection: toRef(props, 'collection'),
       itemPrimaryKey: toRef(props, 'primaryKey'),
-      updateM2aField: (value) => emit('setFieldValue', { field: props.m2aField, value }),
+      updateM2aField: (value) =>
+        emit('setFieldValue', {
+          field: props.m2aField,
+          value,
+        }),
       relationBlocks: toRef(props, 'relationBlocks'),
       relationInlineBlocks: toRef(props, 'relationInlineBlocks'),
       relationMarks: toRef(props, 'relationMarks'),
@@ -324,6 +335,7 @@
   .flexible-editor :deep(.ProseMirror) {
     line-height: var(--editor-lineheight);
     padding: var(--theme--form--field--input--padding, var(--input-padding));
+    padding-left: 2rem;
     overflow: auto;
     white-space: pre-wrap;
   }
@@ -598,6 +610,59 @@
     }
   }
 
+  /* Details */
+  .flexible-editor :deep(.details) {
+    display: flex;
+    gap: 0.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+
+      > [data-type='detailsContent'] > :last-child {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    summary {
+      font-weight: 700;
+    }
+
+    > button {
+      align-items: center;
+      background: transparent;
+      border-radius: 4px;
+      display: flex;
+      font-size: 0.625rem;
+      height: 1.25rem;
+      justify-content: center;
+      line-height: 1;
+      margin-top: 0.1rem;
+      padding: 0;
+      width: 1.25rem;
+
+      &:hover {
+        background-color: var(--theme--form--field--input--border-color);
+      }
+
+      &::before {
+        content: '\25B6';
+      }
+    }
+
+    &.is-open > button::before {
+      transform: rotate(90deg);
+    }
+
+    .details {
+      margin: 0.5rem 0;
+    }
+  }
+
   /* Task List */
   .flexible-editor :deep(ul[data-type='taskList']) {
     list-style: none;
@@ -670,6 +735,50 @@
 
     ul[data-type='taskList'] {
       margin: 0;
+    }
+  }
+
+  /* Handle Drag Selection */
+  .flexible-editor :deep(.ProseMirror-noderangeselection) {
+    *::selection {
+      background: transparent;
+    }
+
+    * {
+      caret-color: transparent;
+    }
+  }
+
+  .flexible-editor :deep(.ProseMirror-selectednode, .ProseMirror-selectednoderange) {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+      content: '';
+      top: -0.25rem;
+      left: -0.25rem;
+      right: -0.25rem;
+      bottom: -0.25rem;
+      background-color: #70cff850;
+      border-radius: 0.2rem;
+    }
+  }
+
+  .flexible-editor :deep(.custom-drag-handle) {
+    &::after {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1rem;
+      height: 1.25rem;
+      content: '⠿';
+      font-weight: 700;
+      cursor: grab;
+      background: var(--theme--primary);
+      /* color: var(--theme); */
+      border-radius: 0.25rem;
     }
   }
 </style>

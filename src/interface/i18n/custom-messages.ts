@@ -31,6 +31,7 @@ export default {
     relation_block: 'Blocks',
     paragraph: 'Paragraph',
     code_block: 'Code Block',
+    details: 'Details',
     h1: '$t:wysiwyg_options.h1',
     h2: '$t:wysiwyg_options.h2',
     h3: '$t:wysiwyg_options.h3',
@@ -72,6 +73,7 @@ export default {
     full: 'Full Width (100%)',
     original: 'Original Size',
     caption_placeholder: 'Add caption...',
+    caption_remove: 'Remove caption',
     alt_placeholder: 'Alt text for accessibility...',
     link_placeholder: 'Link URL...',
     remove: 'Remove Image',
@@ -82,6 +84,7 @@ export default {
     url_description: 'Or insert an image from a URL',
     url_placeholder: 'https://example.com/image.jpg',
     insert_from_url: 'Insert from URL',
+    alignment: 'Image Align',
   },
   toolbar_mode: {
     title: '$t:interfaces.input-rich-text-html.toolbar',

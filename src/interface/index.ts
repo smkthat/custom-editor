@@ -188,6 +188,19 @@ export default defineInterface({
           default_value: false,
         },
       },
+      {
+        field: 'folder',
+        name: '$t:interfaces.system-folder.folder',
+        type: 'uuid',
+        meta: {
+          width: 'full',
+          interface: 'system-folder',
+          note: '$t:interfaces.system-folder.field_hint',
+        },
+        schema: {
+          default_value: undefined,
+        },
+      },
     ];
 
     function useRelationReferenceOptions() {

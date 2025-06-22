@@ -74,8 +74,10 @@
   const uploadImageToDirectus = async (imageBlob: Blob, filename: string): Promise<string> => {
     try {
       const formData = new FormData();
+      // Specific folder for imported images
+      formData.append('folder', props.folder || '');
+      // Append the image file
       formData.append('file', imageBlob, filename);
-      formData.append('folder', '88f605c8-e61f-4e64-9839-24e42c7bf82d'); // Specific folder for imported images
 
       const response = await api.post('/files', formData, {
         headers: {

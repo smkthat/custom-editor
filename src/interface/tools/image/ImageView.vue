@@ -19,24 +19,14 @@
         @blur="handleCaptionBlur"
         ref="captionRef"
         :placeholder="'Enter caption...'"
-      >
-        {{ caption }}
-      </figcaption>
-      <div
-        v-if="!showCaption && selected"
-        class="add-caption-placeholder"
-        :style="getCaptionStyle()"
-        @click="addCaption"
-      >
-        Click to add caption
-      </div>
+      />
     </figure>
   </NodeViewWrapper>
 </template>
 
 <script setup lang="ts">
   import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
-  import { computed, nextTick, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
 
   const props = defineProps(nodeViewProps);
 
@@ -161,19 +151,20 @@
     props.updateAttributes({ caption: newCaption });
   };
 
-  const addCaption = async () => {
-    props.updateAttributes({ caption: 'Enter caption here' });
-    await nextTick();
+  watch(caption, (newValue) => {
+    // Update caption when it changes
     if (captionRef.value) {
-      captionRef.value.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(captionRef.value);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
+      if (captionRef.value.textContent !== newValue) {
+        captionRef.value.textContent = newValue;
+      }
     }
-  };
+  });
+
+  onMounted(() => {
+    if (captionRef.value && caption.value) {
+      captionRef.value.textContent = caption.value;
+    }
+  });
 </script>
 
 <style scoped>
@@ -249,18 +240,18 @@
     opacity: 1;
   }
 
-  /* Node selection styles */
-  .ProseMirror-selectednode .custom-image-figure {
-    outline: 2px solid var(--theme--primary);
-    outline-offset: 2px;
-    border-radius: var(--theme--border-radius);
-  }
-
   /* Ensure the figure inherits the editor's full width */
   .ProseMirror .custom-image-figure {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box;
+  }
+
+  /* Node selection styles */
+  .ProseMirror-selectednode:not(.has-focus) .custom-image-figure {
+    outline: 2px solid var(--theme--primary);
+    outline-offset: 2px;
+    border-radius: var(--theme--border-radius);
   }
 
   /* Size classes for debugging */

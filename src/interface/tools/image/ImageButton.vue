@@ -20,7 +20,7 @@
     </template>
 
     <v-list>
-      <v-list-item clickable @click="openImageDialog" :disabled="disabled">
+      <v-list-item clickable @click="uploadDrawerOpened = true" :disabled="disabled">
         <v-list-item-content>
           <v-text-overflow :text="t('image.upload')" />
         </v-list-item-content>
@@ -30,6 +30,7 @@
       <template v-if="isImageSelected">
         <v-divider />
 
+        <!-- Size Options -->
         <v-list-group>
           <template #activator>
             <v-text-overflow :text="t('image.size')" />
@@ -62,102 +63,137 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-item clickable @click="removeImage">
+        <!-- Alignment Options -->
+        <v-list-group>
+          <template #activator>
+            <v-text-overflow :text="t('image.alignment')" />
+          </template>
+          <v-list-item clickable @click="updateImageAlignment('left')" :active="currentAlignment === 'left'">
+            <v-list-item-content>
+              <v-text-overflow text="Left" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item clickable @click="updateImageAlignment('center')" :active="currentAlignment === 'center'">
+            <v-list-item-content>
+              <v-text-overflow text="Center" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item clickable @click="updateImageAlignment('right')" :active="currentAlignment === 'right'">
+            <v-list-item-content>
+              <v-text-overflow text="Right" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <v-divider />
+
+        <!-- Remove Buttons -->
+        <v-list-item :disabled="currentCaption === ''" clickable @click="removeImageCaption('')">
+          <v-list-item-icon>
+            <v-icon name="format_clear" />
+          </v-list-item-icon>
           <v-list-item-content>
-            <v-text-overflow :text="t('image.remove')" />
+            <v-text-overflow :text="t('image.caption_remove')" />
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item clickable @click="removeImage">
+          <v-list-item-icon>
+            <v-icon name="delete" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-text-overflow :text="t('image.remove')" class="text-danger" />
           </v-list-item-content>
         </v-list-item>
       </template>
     </v-list>
   </v-menu>
 
-  <!-- Image Upload Dialog -->
-  <v-dialog :model-value="imageDialogOpen" @update:model-value="imageDialogOpen = false" persistent>
-    <v-sheet>
-      <v-toolbar color="transparent" class="dialog-title">
-        <v-toolbar-title>{{ t('image.select_image') }}</v-toolbar-title>
-        <v-spacer />
-        <v-button icon @click="imageDialogOpen = false">
-          <v-icon name="close" />
-        </v-button>
-      </v-toolbar>
-
-      <div class="dialog-content">
-        <div class="upload-section">
-          <v-notice type="info" class="upload-notice">
-            <p>{{ t('image.upload_description') }}</p>
-          </v-notice>
-
-          <v-button large class="upload-button" @click="openFilePicker">
-            <v-icon name="upload" left />
-            {{ t('image.choose_file') }}
-          </v-button>
-
-          <div v-if="uploading" class="upload-progress">
-            <v-progress-circular indeterminate />
-            <p>{{ t('image.uploading') }}</p>
-          </div>
-        </div>
-
-        <div class="url-section">
-          <v-divider />
-          <v-notice type="info" class="url-notice">
-            <p>{{ t('image.url_description') }}</p>
-          </v-notice>
-
-          <v-input v-model="imageUrl" :placeholder="t('image.url_placeholder')" class="url-input" />
-
-          <v-button :disabled="!imageUrl" @click="insertImageFromUrl">
-            {{ t('image.insert_from_url') }}
-          </v-button>
-        </div>
-      </div>
-
-      <v-divider />
-
-      <div class="dialog-actions">
-        <v-button secondary @click="imageDialogOpen = false">
-          {{ t('Cancel') }}
-        </v-button>
-      </div>
-    </v-sheet>
-  </v-dialog>
-
-  <!-- Hidden file input -->
-  <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="handleFileInputChange" />
+  <v-drawer
+    v-if="haveFilesAccess && !disabled"
+    :model-value="uploadDrawerOpened"
+    icon="image"
+    :title="t('upload_from_device')"
+    :cancelable="true"
+    @update:model-value="uploadDrawerOpened = false"
+    @cancel="uploadDrawerOpened = false"
+  >
+    <div class="uploader-drawer-content">
+      <v-upload
+        :ref="uploaderComponentElement"
+        :multiple="false"
+        :folder="folder"
+        from-library
+        from-url
+        @input="handleFile"
+      />
+    </div>
+  </v-drawer>
 </template>
 
 <script setup lang="ts">
-  import { useApi } from '@directus/extensions-sdk';
+  import { useApi, useStores } from '@directus/extensions-sdk';
   import { computed, inject, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import type { CustomToolButtonProps } from '../../types';
   import type { Ref } from 'vue';
 
+  import useDirectusToken from '../../composables/use-directus-token';
   import { useI18nFallback } from '../../composables/use-i18n-fallback';
   import { translateShortcut } from '../../directus-core/utils/translate-shortcut';
 
-  const props = defineProps<CustomToolButtonProps>();
+  type FileInfo = {
+    id: string;
+    title: string;
+    type: string;
+  };
 
-  const api = useApi();
   const { t } = useI18nFallback(useI18n());
 
-  const fileInput = ref<HTMLInputElement>();
-  const imageDialogOpen = ref(false);
-  const uploading = ref(false);
-  const imageUrl = ref('');
+  const api = useApi();
+  const { addTokenToURL } = useDirectusToken(api);
+
+  const props = defineProps<CustomToolButtonProps>();
+
+  const uploadDrawerOpened = ref(false);
+  const uploaderComponentElement = ref<HTMLElement>();
   const currentSize = ref('medium');
+  const currentAlignment = ref('left');
+  const currentCaption = ref('');
+  const currentAlt = ref('');
 
-  // ToolButton props handling
-  const tooltip = computed(() => {
-    if (!props.shortcut?.length) return props.title;
+  const { useCollectionsStore } = useStores();
+  const collectionStore = useCollectionsStore();
+  const haveFilesAccess = Boolean(collectionStore.getCollection('directus_files'));
 
-    return `${props.title} (${translateShortcut(props.shortcut)})`;
-  });
+  const handleFile = (file: FileInfo) => {
+    const src_url = addTokenToURL(api.defaults.baseURL + 'assets/' + file.id);
+
+    props.editor
+      .chain()
+      .focus()
+      .setImage({
+        src: src_url,
+        alt: file.title,
+        title: file.title,
+        size: 'medium',
+        alignment: 'left',
+        caption: '',
+      })
+      .run();
+
+    uploadDrawerOpened.value = false;
+  };
 
   const small = computed(() => props.icon || props.display);
   const fullscreen = inject('fullscreen') as Ref;
   const tooltipPlacement = computed(() => (fullscreen.value ? 'bottom' : 'top'));
+
+  // ToolButton props handling
+  const tooltip = computed(() => {
+    if (!props.shortcut?.length) return props.title;
+    return `${props.title} (${translateShortcut(props.shortcut)})`;
+  });
 
   // Image selection detection
   const isImageSelected = computed(() => {
@@ -172,108 +208,38 @@
       if (isImageSelected.value) {
         const attrs = props.editor.getAttributes('customImage');
         currentSize.value = attrs.size || 'medium';
-        console.log('Current image attributes:', attrs);
+        currentAlignment.value = attrs.alignment || 'left';
+        currentCaption.value = attrs.caption || '';
+        currentAlt.value = attrs.alt || '';
       }
     },
     { deep: true }
   );
 
-  const openImageDialog = () => {
-    imageDialogOpen.value = true;
-    imageUrl.value = '';
-  };
-
-  const openFilePicker = () => {
-    fileInput.value?.click();
-  };
-
-  const insertImageFromUrl = () => {
-    if (!imageUrl.value) return;
-
-    // Insert image with default styling
-    props.editor
-      .chain()
-      .focus()
-      .setImage({
-        src: imageUrl.value,
-        size: 'medium',
-        alignment: 'left',
-        caption: '',
-        alt: '',
-        title: '',
-      })
-      .run();
-
-    // Close the dialog
-    imageDialogOpen.value = false;
-    imageUrl.value = '';
-  };
-
-  const handleFileInputChange = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
-    if (!files?.length) return;
-
-    const file = files[0];
-    if (!file) return;
-
-    uploading.value = true;
-
-    try {
-      // Upload using Directus's native file upload
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', '88f605c8-e61f-4e64-9839-24e42c7bf82d');
-
-      const response = await api.post('/files', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      const fileData = response.data.data;
-      const assetUrl = `${window.location.origin}/assets/${fileData.id}`;
-
-      // Insert image with default styling
-      props.editor
-        .chain()
-        .focus()
-        .setImage({
-          src: assetUrl,
-          size: 'medium',
-          alignment: 'left',
-          caption: '',
-          alt: '',
-          title: '',
-        })
-        .run();
-
-      // Close the dialog
-      imageDialogOpen.value = false;
-
-      // Reset the input
-      if (target) target.value = '';
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      uploading.value = false;
-    }
-  };
-
   const updateImageSize = (size: string) => {
-    console.log('Updating image size to:', size);
     currentSize.value = size;
+    updateImageAttributes({ size });
+  };
 
-    // Update the image attributes directly
-    props.editor
-      .chain()
-      .focus()
-      .updateAttributes('customImage', {
-        size: size,
-      })
-      .run();
+  const updateImageAlignment = (alignment: string) => {
+    currentAlignment.value = alignment;
+    updateImageAttributes({ alignment });
+  };
 
-    console.log('Size updated to:', size);
+  const removeImageCaption = (caption: string) => {
+    currentCaption.value = caption;
+    updateImageAttributes({ caption });
+  };
+
+  const updateImageAlt = (alt: string) => {
+    currentAlt.value = alt;
+    updateImageAttributes({ alt });
+  };
+
+  const updateImageAttributes = (attrs: Record<string, any>) => {
+    if (!props.editor) return;
+
+    props.editor.chain().focus().updateAttributes('customImage', attrs).run();
   };
 
   const removeImage = () => {
@@ -282,61 +248,6 @@
 </script>
 
 <style scoped>
-  .dialog-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 24px;
-    font-weight: 500;
-    padding: 24px;
-  }
-
-  .dialog-content {
-    padding: 24px;
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-
-  .upload-section {
-    margin-bottom: 24px;
-  }
-
-  .upload-notice {
-    margin-bottom: 16px;
-  }
-
-  .upload-button {
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-  .upload-progress {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    justify-content: center;
-    padding: 16px;
-  }
-
-  .url-section {
-    margin-top: 24px;
-  }
-
-  .url-notice {
-    margin: 16px 0;
-  }
-
-  .url-input {
-    margin-bottom: 16px;
-  }
-
-  .dialog-actions {
-    padding: 16px 24px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
   .is-active :deep(.button:not(:disabled)) {
     color: var(--v-button-color-active);
     background-color: var(--v-button-background-color-active);

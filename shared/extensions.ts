@@ -1,9 +1,10 @@
+// Used for /content and /src/display
+// Add only extensions that are necessary for rendering the content
 import Blockquote from '@tiptap/extension-blockquote';
 import Bold from '@tiptap/extension-bold';
 import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
-// Used for /content and /src/display
-// Add only extensions that are necessary for rendering the content
+import { Details, DetailsContent, DetailsSummary } from '@tiptap/extension-details';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
@@ -58,4 +59,7 @@ export default [
   Placeholder,
   Focus,
   Selection,
+  Details,
+  DetailsSummary,
+  DetailsContent,
 ];
