@@ -1,8 +1,8 @@
 import type { RelationNodeAttrs } from '../../../shared/types';
-import type { RelationM2A } from '../directus-core/composables/use-relation-m2a.js';
+import type { RelationM2A } from '../directus-core/composables/use-relation-m2a';
 import type { DisplayItem } from '../directus-core/composables/use-relation-multiple';
 import type { Collection } from '../directus-core/types/collections';
-import type { UUID } from '../types';
+import type { UUID } from './index';
 import type { Item, PrimaryKey } from '@directus/types';
 import type { JSONContent } from '@tiptap/vue-3';
 import type { ComputedRef, Ref } from 'vue';

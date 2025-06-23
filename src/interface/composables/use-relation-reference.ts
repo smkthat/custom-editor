@@ -15,13 +15,13 @@ import type {
 } from '../types';
 import type { ComputedRef, Ref } from 'vue';
 
-import { useM2aStore } from '../composables/use-m2a-store';
-import { useRelationM2A } from '../directus-core/composables/use-relation-m2a.js';
+import { useRelationM2A } from '../directus-core/composables/use-relation-m2a';
 import { useRelationMultiple } from '../directus-core/composables/use-relation-multiple';
 import { addRelatedPrimaryKeyToFields } from '../directus-core/utils/add-related-primary-key-to-fields';
 // TODO: [test] We do not need this, because the permission counts for the whole … Test it with permissions on the editor
 // import { useRelationPermissionsM2A } from "../directus-core/composables/use-relation-permissions";
 import { adjustFieldsForDisplays } from '../directus-core/utils/adjust-fields-for-displays';
+import { useM2aStore } from './use-m2a-store';
 
 export function useRelationReference({
   m2aField,
