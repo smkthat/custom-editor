@@ -1,15 +1,22 @@
 {
   "name": "custom-tip-tap-editor",
-  "version": "1.8.3",
-  "description": "A rich text editor (WYSIWYG) with JSON output that allows the integration of M2A relations to make it extremely flexible.",
+  "version": "1.9.0",
+  "description": "Fork of pixelsock/custom-editor - A rich text editor (WYSIWYG) with JSON output that allows the integration of M2A relations to make it extremely flexible.",
   "license": "GPL-3.0",
   "author": {
-    "email": "nick@stump.works",
-    "name": "pixelsock"
+    "email": "ya@smkthat.ru",
+    "name": "smkthat"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pixelsock/directus-extensions/custom-editor"
+    "url": "https://github.com/smkthat/custom-editor"
+  },
+  "repository:original": {
+    "type": "git",
+    "url": "https://github.com/pixelsock/custom-editor"
+  },
+  "bugs": {
+    "url": "https://github.com/smkthat/custom-editor/issues"
   },
   "icon": "description",
   "keywords": [
@@ -34,6 +41,9 @@
     "prosemirror"
   ],
   "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "directus:extension": {
     "host": "^10.0.0 || ^11.0.0",
     "type": "bundle",

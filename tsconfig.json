@@ -22,7 +22,8 @@
         "forceConsistentCasingInFileNames": true,
         "allowSyntheticDefaultImports": true,
         "isolatedModules": true,
-        "rootDirs": ["./src", "./shared"]
+        "rootDirs": [
+          "./src", "./shared"]
     },
     "include": ["./src/**/*.ts", "./src/**/*.vue"]
 }

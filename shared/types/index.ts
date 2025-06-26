@@ -1,1 +1,1 @@
-export type * from "./relation-nodes";
+export type * from './relation-nodes';
