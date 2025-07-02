@@ -189,6 +189,30 @@ export default defineInterface({
         },
       },
       {
+        field: 'typography',
+        name: customMessages.typography,
+        type: 'boolean',
+        meta: {
+          width: 'half',
+          interface: 'boolean',
+        },
+        schema: {
+          default_value: false,
+        },
+      },
+      {
+        field: 'focus',
+        name: customMessages.focus,
+        type: 'boolean',
+        meta: {
+          width: 'half',
+          interface: 'boolean',
+        },
+        schema: {
+          default_value: false,
+        },
+      },
+      {
         field: 'folder',
         name: '$t:interfaces.system-folder.folder',
         type: 'uuid',

@@ -21,6 +21,8 @@ export default {
   formats_appearance: 'Formats Button Appearance',
   formats_as_button: 'Show name of active format',
   spellcheck: 'Spellcheck',
+  focus: 'Show Focus border',
+  typography: 'Transform to typographic characters',
   editor_height: {
     title: 'Editor Height',
     grow_till_overflow: 'Grow till Overflow',
