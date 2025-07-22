@@ -75,6 +75,8 @@
     displayFormat: boolean;
     font: string;
     spellcheck: boolean;
+    focus: boolean;
+    typography: boolean;
     editorHeight: 'height-fixed' | 'height-grow' | 'height-grow-till-overflow';
     field: string | null;
     collection: string | null;
@@ -93,6 +95,8 @@
     displayFormat: false,
     font: 'sans-serif',
     spellcheck: false,
+    focus: false,
+    typography: false,
     editorHeight: 'height-grow-till-overflow',
     field: null,
     collection: null,
@@ -107,28 +111,40 @@
 
   // Input Mode
   const singleLineMode = computed(() => props.inputMode == 'single');
+  const focusMode = computed(() => props.focus);
+  const typographyMode = computed(() => props.typography);
+
+  const extensions = [
+    Document.extend(singleLineMode.value ? { content: '(text|singleline)*' } : {}),
+    Text,
+    Paragraph,
+    Placeholder.configure({ placeholder: props.placeholder }),
+    Dropcursor,
+    Gapcursor,
+    NodeRange.configure({ key: null }),
+    RelationBlock,
+    RelationInlineBlock,
+    RelationMark,
+    ...toolsExtensions(props.tools),
+  ];
+
+  if (focusMode.value) {
+    extensions.push(
+      Focus.configure({
+        className: 'has-focus',
+        mode: 'shallowest',
+      })
+    );
+  }
+
+  if (typographyMode.value) {
+    extensions.push(Typography);
+  }
 
   // TipTap Editor Setup
   const editor = useEditor({
     content: props.value,
-    extensions: [
-      Document.extend(singleLineMode.value ? { content: '(text|singleline)*' } : {}),
-      Text,
-      Paragraph,
-      Typography,
-      Placeholder.configure({ placeholder: props.placeholder }),
-      Dropcursor,
-      Gapcursor,
-      Focus.configure({
-        className: 'has-focus',
-        mode: 'shallowest',
-      }),
-      NodeRange.configure({ key: null }),
-      RelationBlock,
-      RelationInlineBlock,
-      RelationMark,
-      ...toolsExtensions(props.tools),
-    ],
+    extensions: extensions,
     autofocus: true,
     onCreate() {
       // called twice to reset the items even if props.value (below) is empty
@@ -767,6 +783,8 @@
   }
 
   .flexible-editor :deep(.custom-drag-handle) {
+    padding-right: 6px;
+
     &::after {
       display: flex;
       align-items: center;

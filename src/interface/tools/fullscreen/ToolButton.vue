@@ -1,5 +1,5 @@
 <template>
-  <ToolButton :title :icon :disabled :active="fullscreen" :action="toggleFullscreen" />
+  <ToolButton :title :icon :display :shortcut :disabled :active="fullscreen" :action="toggleFullscreen" />
 </template>
 
 <script setup lang="ts">
